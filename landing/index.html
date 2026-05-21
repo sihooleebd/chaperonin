@@ -208,6 +208,110 @@
   </div>
 </section>
 
+<!-- ── Features ── -->
+<section class="features">
+  <div class="features-inner">
+    <div class="section-head">
+      <p class="section-eyebrow">Capabilities</p>
+      <h2 class="section-title">Built for real pipelines</h2>
+    </div>
+    <div class="features-grid">
+
+      <div class="feature-item">
+        <span class="feature-tag" style="--tc:#8b5cf6">Types</span>
+        <h3 class="feature-title">Typed connections</h3>
+        <p class="feature-desc">Every handle declares a type — <code>Structure.PDB</code>, <code>Sequence.FASTA</code>, <code>Visual.PNG</code>. The canvas refuses incompatible connections before you even try to run. Union types (<code>Structure.PDB | Structure.mmCIF</code>) widen what an input accepts.</p>
+      </div>
+
+      <div class="feature-item">
+        <span class="feature-tag" style="--tc:#3b82f6">Streaming</span>
+        <h3 class="feature-title">Live log streaming</h3>
+        <p class="feature-desc">The backend streams <code>node.log</code>, <code>node.progress</code>, and <code>node.done</code> events over a single persistent WebSocket. Every stdout line from RFDiffusion or Rosetta appears in the log panel as execution happens — no polling.</p>
+      </div>
+
+      <div class="feature-item">
+        <span class="feature-tag" style="--tc:#10b981">DSL</span>
+        <h3 class="feature-title">Bidirectional DSL</h3>
+        <p class="feature-desc">The canvas auto-generates a human-readable pipeline description. Edit the DSL text and the canvas re-renders. Edit the canvas and the DSL regenerates. Both representations stay in sync at all times.</p>
+      </div>
+
+      <div class="feature-item">
+        <span class="feature-tag" style="--tc:#f59e0b">Resources</span>
+        <h3 class="feature-title">Resource-aware</h3>
+        <p class="feature-desc">Each module declares its hardware requirements upfront — GPU count, VRAM, CPU cores, memory. The orchestrator knows what RFDiffusion needs (1× A100, 24 GB) before it schedules anything. No surprises mid-run.</p>
+      </div>
+
+      <div class="feature-item">
+        <span class="feature-tag" style="--tc:#ef4444">Control</span>
+        <h3 class="feature-title">One-click cancel</h3>
+        <p class="feature-desc">Send a <code>{"type":"cancel"}</code> message at any point during execution. The backend stops the active node gracefully and emits <code>node.cancelled</code> for any remaining queued nodes. The UI unlocks immediately.</p>
+      </div>
+
+      <div class="feature-item">
+        <span class="feature-tag" style="--tc:#14b8a6">Replay</span>
+        <h3 class="feature-title">Serializable graphs</h3>
+        <p class="feature-desc">Every run serializes the complete pipeline to JSON — node IDs, module params, edge wiring, and the DSL string. Re-run any past pipeline exactly, share it with a collaborator, or use it as a starting point for the next experiment.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── Protocol ── -->
+<section class="protocol">
+  <div class="protocol-inner">
+
+    <div class="protocol-text">
+      <p class="section-eyebrow">WebSocket protocol</p>
+      <h2 class="section-title">Execution you can watch</h2>
+      <p class="protocol-desc">When you hit Run, the frontend serializes the graph and sends it to <code>ws://localhost:8000/ws</code>. The Python orchestrator traverses the edge list to determine execution order, then streams events back as each node progresses.</p>
+      <p class="protocol-desc">Every run ends with exactly one terminal event — <code>pipeline.done</code> or <code>pipeline.error</code>. Without it the UI stays in running state. The protocol is intentionally simple: one WebSocket, one JSON object per line.</p>
+      <div class="event-list">
+        <div class="event-row"><span class="ev-chip ev-start">pipeline.start</span><span class="ev-desc">Emitted once before any node events. Carries the total node count.</span></div>
+        <div class="event-row"><span class="ev-chip ev-queue">node.queued</span><span class="ev-desc">Node is waiting to be scheduled.</span></div>
+        <div class="event-row"><span class="ev-chip ev-run">node.running</span><span class="ev-desc">Node has started executing on the backend.</span></div>
+        <div class="event-row"><span class="ev-chip ev-prog">node.progress</span><span class="ev-desc">Drives the progress bar. Carries <code>current</code> and <code>total</code>.</span></div>
+        <div class="event-row"><span class="ev-chip ev-log">node.log</span><span class="ev-desc">One line of stdout/stderr from the running tool.</span></div>
+        <div class="event-row"><span class="ev-chip ev-done">node.done</span><span class="ev-desc">Node finished successfully.</span></div>
+        <div class="event-row"><span class="ev-chip ev-done">pipeline.done</span><span class="ev-desc">Terminal. Pipeline complete.</span></div>
+      </div>
+    </div>
+
+    <div class="protocol-terminal">
+      <div class="term-dots"><span></span><span></span><span></span></div>
+      <div class="term-lines">
+        <div class="tl"><span class="j-brace">{</span> <span class="j-key">"type"</span>: <span class="j-start">"pipeline.start"</span>, <span class="j-key">"total"</span>: <span class="j-num">3</span> <span class="j-brace">}</span></div>
+        <div class="tl"><span class="j-brace">{</span> <span class="j-key">"type"</span>: <span class="j-queue">"node.queued"</span>, <span class="j-key">"nodeId"</span>: <span class="j-str">"rfdiffusion_1"</span> <span class="j-brace">}</span></div>
+        <div class="tl"><span class="j-brace">{</span> <span class="j-key">"type"</span>: <span class="j-run">"node.running"</span>, <span class="j-key">"nodeId"</span>: <span class="j-str">"rfdiffusion_1"</span> <span class="j-brace">}</span></div>
+        <div class="tl"><span class="j-brace">{</span> <span class="j-key">"type"</span>: <span class="j-prog">"node.progress"</span>, <span class="j-key">"nodeId"</span>: <span class="j-str">"rfdiffusion_1"</span>, <span class="j-key">"current"</span>: <span class="j-num">12</span>, <span class="j-key">"total"</span>: <span class="j-num">50</span> <span class="j-brace">}</span></div>
+        <div class="tl"><span class="j-brace">{</span> <span class="j-key">"type"</span>: <span class="j-log">"node.log"</span>, <span class="j-key">"nodeId"</span>: <span class="j-str">"rfdiffusion_1"</span>, <span class="j-key">"line"</span>: <span class="j-logstr">"[12/50] pLDDT=0.74 loss=0.89"</span> <span class="j-brace">}</span></div>
+        <div class="tl"><span class="j-brace">{</span> <span class="j-key">"type"</span>: <span class="j-prog">"node.progress"</span>, <span class="j-key">"nodeId"</span>: <span class="j-str">"rfdiffusion_1"</span>, <span class="j-key">"current"</span>: <span class="j-num">50</span>, <span class="j-key">"total"</span>: <span class="j-num">50</span> <span class="j-brace">}</span></div>
+        <div class="tl"><span class="j-brace">{</span> <span class="j-key">"type"</span>: <span class="j-done">"node.done"</span>, <span class="j-key">"nodeId"</span>: <span class="j-str">"rfdiffusion_1"</span> <span class="j-brace">}</span></div>
+        <div class="tl tl-dim"><span class="j-brace">{</span> <span class="j-key">"type"</span>: <span class="j-run">"node.running"</span>, <span class="j-key">"nodeId"</span>: <span class="j-str">"rosetta_1"</span> <span class="j-brace">}</span></div>
+        <div class="tl tl-dim"><span class="j-brace">{</span> <span class="j-key">"type"</span>: <span class="j-done">"node.done"</span>, <span class="j-key">"nodeId"</span>: <span class="j-str">"rosetta_1"</span> <span class="j-brace">}</span></div>
+        <div class="tl tl-dim"><span class="j-brace">{</span> <span class="j-key">"type"</span>: <span class="j-run">"node.running"</span>, <span class="j-key">"nodeId"</span>: <span class="j-str">"pymol_1"</span> <span class="j-brace">}</span></div>
+        <div class="tl tl-dim"><span class="j-brace">{</span> <span class="j-key">"type"</span>: <span class="j-done">"node.done"</span>, <span class="j-key">"nodeId"</span>: <span class="j-str">"pymol_1"</span> <span class="j-brace">}</span></div>
+        <div class="tl"><span class="j-brace">{</span> <span class="j-key">"type"</span>: <span class="j-done">"pipeline.done"</span> <span class="j-brace">}</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <div class="cta-inner">
+    <p class="section-eyebrow" style="text-align:center">Get started</p>
+    <h2 class="cta-title">Build your first pipeline.</h2>
+    <p class="cta-sub">Open the app, drag a module onto the canvas, wire up an output. It takes about thirty seconds to see the graph executor working.</p>
+    <div class="cta-buttons">
+      <a href="../frontend/" class="btn-primary">Open App</a>
+      <a href="https://github.com/sihooleebd/chaperonin" class="btn-ghost" target="_blank" rel="noopener">View on GitHub →</a>
+    </div>
+  </div>
+</section>
+
 <!-- ── Footer ── -->
 <footer class="footer">
   <div class="footer-inner">
