@@ -31,59 +31,57 @@
 <!-- ── Hero ── -->
 <section class="hero">
   <div class="hero-inner">
+
     <div class="hero-head">
       <p class="hero-eyebrow">Computational biology · Workflow orchestration</p>
       <h1 class="hero-title">Drag. Connect. <em>Run.</em></h1>
       <p class="hero-sub">A visual pipeline engine for protein design. Wire RFDiffusion, AlphaFold, Rosetta, and PyMOL together — then execute with one click.</p>
     </div>
 
-    <!-- Node diagram -->
+    <!--
+      Node diagram.
+      viewBox: 0 0 600 460
+      Center: (300, 230)   Radius: 168
+
+      Node centers (angle from positive-x, CCW):
+        rfd         120°  →  (216,  85)
+        alphafold    60°  →  (384,  85)
+        pymol         0°  →  (468, 230)
+        pdb2fasta   300°  →  (384, 375)
+        rosetta     240°  →  (216, 375)
+        rosettafold 180°  →  (132, 230)
+
+      No CSS transforms on SVG elements — all positions are absolute SVG coords.
+      Edge draw animation uses stroke-dashoffset only (no transforms).
+    -->
     <div class="diagram-wrap">
-      <svg id="node-canvas" viewBox="0 0 600 460" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <svg id="node-canvas" viewBox="0 0 600 460" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <!-- Dot grid pattern (mimics the app canvas) -->
+          <!-- Dot grid (mimics the app canvas) -->
           <pattern id="dot-grid" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse">
-            <circle cx="0" cy="0" r="0.9" fill="#1a2540"/>
+            <circle cx="1" cy="1" r="0.8" fill="#1a2540"/>
           </pattern>
-          <!-- Vignette mask -->
-          <radialGradient id="vignette" cx="50%" cy="50%" r="50%">
-            <stop offset="40%" stop-color="white" stop-opacity="1"/>
-            <stop offset="100%" stop-color="white" stop-opacity="0"/>
-          </radialGradient>
-          <mask id="vignette-mask">
-            <rect width="600" height="460" fill="url(#vignette)"/>
-          </mask>
-          <!-- Glow filter for center node -->
-          <filter id="center-glow" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur stdDeviation="8" result="blur"/>
+
+          <!-- Center-node glow -->
+          <filter id="center-glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="6" result="blur"/>
             <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
-          <!-- Glow for pulse dots -->
-          <filter id="pulse-glow" x="-150%" y="-150%" width="400%" height="400%">
-            <feGaussianBlur stdDeviation="3.5" result="blur"/>
+
+          <!-- Pulse dot glow -->
+          <filter id="pulse-glow" x="-200%" y="-200%" width="500%" height="500%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
             <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
         </defs>
 
         <!-- Dot grid background -->
-        <rect width="600" height="460" fill="url(#dot-grid)" mask="url(#vignette-mask)"/>
+        <rect width="600" height="460" fill="url(#dot-grid)" opacity="0.7"/>
 
-        <!-- Pulsing ring around center -->
-        <circle class="center-ring" cx="300" cy="230" r="38" fill="none" stroke="#10b981" stroke-width="1"/>
+        <!-- Pulsing ring around center — no SVG transform attribute; CSS handles scale from exact pixel origin -->
+        <circle class="center-ring" cx="300" cy="230" r="40"/>
 
-        <!--
-          Edges (lines from CENTER 300,230 to each peripheral node center)
-          All edge lengths ≈ 168px.  stroke-dasharray slightly over that.
-          JS toggles class "connected" to draw them in.
-
-          Node positions (CENTER=(300,230), RADIUS=168):
-          rfd         angle=120° → x=216, y=85
-          alphafold   angle=60°  → x=384, y=85
-          pymol       angle=0°   → x=468, y=230
-          pdb2fasta   angle=300° → x=384, y=375
-          rosetta     angle=240° → x=216, y=375
-          rosettafold angle=180° → x=132, y=230
-        -->
+        <!-- ── Edges ── (CSS draws them in/out via stroke-dashoffset) -->
         <line id="edge-rfd"         class="node-edge" style="--clr:#8b5cf6" x1="300" y1="230" x2="216" y2="85"/>
         <line id="edge-alphafold"   class="node-edge" style="--clr:#3b82f6" x1="300" y1="230" x2="384" y2="85"/>
         <line id="edge-pymol"       class="node-edge" style="--clr:#f59e0b" x1="300" y1="230" x2="468" y2="230"/>
@@ -91,7 +89,7 @@
         <line id="edge-rosetta"     class="node-edge" style="--clr:#10b981" x1="300" y1="230" x2="216" y2="375"/>
         <line id="edge-rosettafold" class="node-edge" style="--clr:#6366f1" x1="300" y1="230" x2="132" y2="230"/>
 
-        <!-- Pulse dots (travel from center to node on Run) -->
+        <!-- ── Pulse dots ── (animated by JS, travel center→node) -->
         <circle id="pulse-rfd"         class="pulse-dot" style="--clr:#8b5cf6" cx="300" cy="230" r="5" filter="url(#pulse-glow)"/>
         <circle id="pulse-alphafold"   class="pulse-dot" style="--clr:#3b82f6" cx="300" cy="230" r="5" filter="url(#pulse-glow)"/>
         <circle id="pulse-pymol"       class="pulse-dot" style="--clr:#f59e0b" cx="300" cy="230" r="5" filter="url(#pulse-glow)"/>
@@ -99,74 +97,81 @@
         <circle id="pulse-rosetta"     class="pulse-dot" style="--clr:#10b981" cx="300" cy="230" r="5" filter="url(#pulse-glow)"/>
         <circle id="pulse-rosettafold" class="pulse-dot" style="--clr:#6366f1" cx="300" cy="230" r="5" filter="url(#pulse-glow)"/>
 
-        <!-- ── Peripheral nodes ── -->
+        <!--
+          ── Tool nodes ──
+          All positions are absolute. No transform attribute on <g> to avoid
+          conflict with any CSS transform. Rects: x=nx-54, y=ny-24, w=108, h=48.
+          Text uses dominant-baseline="middle" for vertical centering.
+        -->
 
-        <!-- RFDiffusion  216, 85 -->
-        <g class="tool-node" id="node-rfd" style="--clr:#8b5cf6; --float-delay:0.0s" transform="translate(216,85)">
-          <rect class="node-body" x="-54" y="-24" width="108" height="48" rx="8"/>
-          <text class="node-label" y="-4" text-anchor="middle" font-size="12" font-weight="600">RFDiffusion</text>
-          <text class="node-tag"  y="13" text-anchor="middle" font-size="9">design</text>
+        <!-- RFDiffusion (216, 85) -->
+        <g class="tool-node" id="node-rfd" style="--clr:#8b5cf6">
+          <rect class="node-body" x="162" y="61" width="108" height="48" rx="8"/>
+          <text class="node-label" x="216" y="79" text-anchor="middle" dominant-baseline="middle" font-size="11.5" font-weight="600" font-family="Inter,sans-serif">RFDiffusion</text>
+          <text class="node-tag"   x="216" y="98" text-anchor="middle" dominant-baseline="middle" font-size="9"    font-family="JetBrains Mono,monospace" letter-spacing="0.5">design</text>
         </g>
 
-        <!-- AlphaFold  384, 85 -->
-        <g class="tool-node" id="node-alphafold" style="--clr:#3b82f6; --float-delay:0.5s" transform="translate(384,85)">
-          <rect class="node-body" x="-54" y="-24" width="108" height="48" rx="8"/>
-          <text class="node-label" y="-4" text-anchor="middle" font-size="12" font-weight="600">AlphaFold</text>
-          <text class="node-tag"  y="13" text-anchor="middle" font-size="9">predict</text>
+        <!-- AlphaFold (384, 85) -->
+        <g class="tool-node" id="node-alphafold" style="--clr:#3b82f6">
+          <rect class="node-body" x="330" y="61" width="108" height="48" rx="8"/>
+          <text class="node-label" x="384" y="79" text-anchor="middle" dominant-baseline="middle" font-size="11.5" font-weight="600" font-family="Inter,sans-serif">AlphaFold</text>
+          <text class="node-tag"   x="384" y="98" text-anchor="middle" dominant-baseline="middle" font-size="9"    font-family="JetBrains Mono,monospace" letter-spacing="0.5">predict</text>
         </g>
 
-        <!-- PyMOL  468, 230 -->
-        <g class="tool-node" id="node-pymol" style="--clr:#f59e0b; --float-delay:1.0s" transform="translate(468,230)">
-          <rect class="node-body" x="-48" y="-24" width="96" height="48" rx="8"/>
-          <text class="node-label" y="-4" text-anchor="middle" font-size="12" font-weight="600">PyMOL</text>
-          <text class="node-tag"  y="13" text-anchor="middle" font-size="9">render</text>
+        <!-- PyMOL (468, 230) -->
+        <g class="tool-node" id="node-pymol" style="--clr:#f59e0b">
+          <rect class="node-body" x="420" y="206" width="96" height="48" rx="8"/>
+          <text class="node-label" x="468" y="224" text-anchor="middle" dominant-baseline="middle" font-size="11.5" font-weight="600" font-family="Inter,sans-serif">PyMOL</text>
+          <text class="node-tag"   x="468" y="243" text-anchor="middle" dominant-baseline="middle" font-size="9"    font-family="JetBrains Mono,monospace" letter-spacing="0.5">render</text>
         </g>
 
-        <!-- PDB→FASTA  384, 375 -->
-        <g class="tool-node" id="node-pdb2fasta" style="--clr:#14b8a6; --float-delay:1.5s" transform="translate(384,375)">
-          <rect class="node-body" x="-54" y="-24" width="108" height="48" rx="8"/>
-          <text class="node-label" y="-4" text-anchor="middle" font-size="12" font-weight="600">PDB → FASTA</text>
-          <text class="node-tag"  y="13" text-anchor="middle" font-size="9">convert</text>
+        <!-- PDB→FASTA (384, 375) -->
+        <g class="tool-node" id="node-pdb2fasta" style="--clr:#14b8a6">
+          <rect class="node-body" x="330" y="351" width="108" height="48" rx="8"/>
+          <text class="node-label" x="384" y="369" text-anchor="middle" dominant-baseline="middle" font-size="11"   font-weight="600" font-family="Inter,sans-serif">PDB → FASTA</text>
+          <text class="node-tag"   x="384" y="388" text-anchor="middle" dominant-baseline="middle" font-size="9"    font-family="JetBrains Mono,monospace" letter-spacing="0.5">convert</text>
         </g>
 
-        <!-- Rosetta Relax  216, 375 -->
-        <g class="tool-node" id="node-rosetta" style="--clr:#10b981; --float-delay:2.0s" transform="translate(216,375)">
-          <rect class="node-body" x="-58" y="-24" width="116" height="48" rx="8"/>
-          <text class="node-label" y="-4" text-anchor="middle" font-size="12" font-weight="600">Rosetta Relax</text>
-          <text class="node-tag"  y="13" text-anchor="middle" font-size="9">refine</text>
+        <!-- Rosetta Relax (216, 375) -->
+        <g class="tool-node" id="node-rosetta" style="--clr:#10b981">
+          <rect class="node-body" x="158" y="351" width="116" height="48" rx="8"/>
+          <text class="node-label" x="216" y="369" text-anchor="middle" dominant-baseline="middle" font-size="11"   font-weight="600" font-family="Inter,sans-serif">Rosetta Relax</text>
+          <text class="node-tag"   x="216" y="388" text-anchor="middle" dominant-baseline="middle" font-size="9"    font-family="JetBrains Mono,monospace" letter-spacing="0.5">refine</text>
         </g>
 
-        <!-- RoseTTAFold  132, 230 -->
-        <g class="tool-node" id="node-rosettafold" style="--clr:#6366f1; --float-delay:2.5s" transform="translate(132,230)">
-          <rect class="node-body" x="-58" y="-24" width="116" height="48" rx="8"/>
-          <text class="node-label" y="-4" text-anchor="middle" font-size="12" font-weight="600">RoseTTAFold</text>
-          <text class="node-tag"  y="13" text-anchor="middle" font-size="9">predict</text>
+        <!-- RoseTTAFold (132, 230) -->
+        <g class="tool-node" id="node-rosettafold" style="--clr:#6366f1">
+          <rect class="node-body" x="74" y="206" width="116" height="48" rx="8"/>
+          <text class="node-label" x="132" y="224" text-anchor="middle" dominant-baseline="middle" font-size="11"   font-weight="600" font-family="Inter,sans-serif">RoseTTAFold</text>
+          <text class="node-tag"   x="132" y="243" text-anchor="middle" dominant-baseline="middle" font-size="9"    font-family="JetBrains Mono,monospace" letter-spacing="0.5">predict</text>
         </g>
 
-        <!-- ── Center node (rendered last, on top) ── -->
+        <!-- ── Center node (last = on top) ── -->
         <g id="node-center" filter="url(#center-glow)">
           <rect x="228" y="202" width="144" height="56" rx="10" fill="#0d1929" stroke="#10b981" stroke-width="1.5"/>
-          <text x="300" y="226" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="700" font-family="Inter,sans-serif">Chaperonin</text>
-          <text x="300" y="244" text-anchor="middle" fill="#10b981" font-size="9" font-weight="600" letter-spacing="1.5" font-family="JetBrains Mono,monospace">ORCHESTRATOR</text>
+          <text x="300" y="223" text-anchor="middle" dominant-baseline="middle" fill="#e2e8f0" font-size="13" font-weight="700" font-family="Inter,sans-serif">Chaperonin</text>
+          <text x="300" y="244" text-anchor="middle" dominant-baseline="middle" fill="#10b981" font-size="8.5" font-weight="600" letter-spacing="1.5" font-family="JetBrains Mono,monospace">ORCHESTRATOR</text>
         </g>
       </svg>
-    </div><!-- /diagram-wrap -->
+    </div>
 
     <div class="hero-foot">
       <a href="../frontend/" class="btn-primary">Open App</a>
-      <button id="run-btn" class="btn-run">▶&nbsp;&nbsp;Run Pipeline</button>
+      <button id="run-btn" class="btn-run">&#9654;&nbsp;&nbsp;Run Pipeline</button>
       <a href="https://github.com/sihooleebd/chaperonin" class="btn-ghost" target="_blank" rel="noopener">GitHub →</a>
     </div>
+
   </div>
 </section>
 
 <!-- ── About ── -->
 <section class="about" id="about">
   <div class="about-inner">
+
     <div class="about-lede">
       <p class="about-eyebrow">What is Chaperonin?</p>
       <h2 class="about-title">A canvas for<br>protein pipelines</h2>
-      <p class="about-body">Chaperonin is a typed, visual workflow engine for computational biology. You drag modules onto a node canvas, wire their inputs and outputs together, and hit Run. The frontend serializes the graph and sends it to a Python backend over WebSocket, which executes each tool in order and streams live logs back.</p>
+      <p class="about-body">Chaperonin is a typed, visual workflow engine for computational biology. Drag modules onto a node canvas, wire their inputs and outputs together, and hit Run. The frontend serializes the graph and sends it to a Python backend over WebSocket, which executes each tool in order and streams live logs back.</p>
       <p class="about-body">The type system prevents bad connections — a <code>Structure.PDB</code> output won't connect to a <code>Sequence.FASTA</code> input. Every tool's resource requirements (GPU, memory) are declared upfront.</p>
     </div>
 
@@ -174,17 +179,17 @@
       <div class="step-card">
         <div class="step-num">01</div>
         <h3 class="step-title">Drag modules</h3>
-        <p class="step-body">Pull any tool from the palette onto the canvas. Each module exposes typed input and output handles. The palette groups tools by category: design, predict, refine, render, convert.</p>
+        <p class="step-body">Pull any tool from the palette onto the canvas. Each module exposes typed input and output handles. Tools are grouped by category: design, predict, refine, render, convert.</p>
       </div>
       <div class="step-card">
         <div class="step-num">02</div>
         <h3 class="step-title">Wire connections</h3>
-        <p class="step-body">Drag from an output handle to a compatible input handle. Chaperonin enforces type compatibility — it won't let you connect a structure file to a sequence consumer. Unconnected required inputs block the Run button.</p>
+        <p class="step-body">Drag from an output handle to a compatible input handle. Chaperonin enforces type compatibility — it won't let you connect a structure file to a sequence consumer. Unconnected required inputs block Run.</p>
       </div>
       <div class="step-card">
         <div class="step-num">03</div>
         <h3 class="step-title">Run</h3>
-        <p class="step-body">Hit Run. Chaperonin serializes the graph to JSON, sends it to the Python orchestrator via WebSocket, and streams <code>node.running</code>, <code>node.progress</code>, and <code>node.log</code> events back in real time. Each node's status dot updates live.</p>
+        <p class="step-body">Hit Run. Chaperonin serializes the graph to JSON, sends it to the Python orchestrator via WebSocket, and streams <code>node.running</code>, <code>node.progress</code>, and <code>node.log</code> events back in real time.</p>
       </div>
     </div>
 
@@ -199,6 +204,7 @@
         <span class="pill" style="--c:#14b8a6">PDB → FASTA</span>
       </div>
     </div>
+
   </div>
 </section>
 
