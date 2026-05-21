@@ -1,85 +1,124 @@
-// ── Pipeline SVG animation ────────────────────────────────
 (function () {
-  const NODES = {
-    rfd:   { dot: 'rfd-dot',   prog: 'rfd-prog',   rect: 'rfd-rect',   progMax: 230 },
-    relax: { dot: 'relax-dot', prog: 'relax-prog',  rect: 'relax-rect', progMax: 230 },
-    pymol: { dot: 'pymol-dot', prog: 'pymol-prog',  rect: 'pymol-rect', progMax: 230 },
+  'use strict';
+
+  var mainScroll  = document.getElementById('main-scroll');
+  var progressBar = document.getElementById('scroll-progress');
+  var sbPip       = document.getElementById('sb-pip');
+  var sbText      = document.getElementById('sb-text');
+  var outDot      = document.getElementById('sb-out-dot');
+
+  var SB_MAX = 200; // max width of progress rects in sidebar SVG
+
+  var NODES = {
+    rfd:   { dot: 'sb-rfd-dot',   prog: 'sb-rfd-prog',   rect: 'sb-rfd-rect',   color: '#8b5cf6' },
+    relax: { dot: 'sb-relax-dot', prog: 'sb-relax-prog', rect: 'sb-relax-rect', color: '#10b981' },
+    pymol: { dot: 'sb-pymol-dot', prog: 'sb-pymol-prog', rect: 'sb-pymol-rect', color: '#f59e0b' },
   };
-  const ORDER = ['rfd', 'relax', 'pymol'];
-  const DURATIONS = { rfd: 2800, relax: 1900, pymol: 1400 };
 
-  function set(id, attrs) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
-  }
+  var SCENE_ORDER = ['init', 'rfd', 'relax', 'pymol', 'done'];
 
-  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+  function el(id) { return document.getElementById(id); }
 
-  async function animProg(progId, maxW, ms) {
-    const el = document.getElementById(progId);
-    if (!el) return;
-    const steps = 40;
-    const stepMs = ms / steps;
-    for (let i = 0; i <= steps; i++) {
-      el.setAttribute('width', ((i / steps) * maxW).toFixed(1));
-      await sleep(stepMs);
+  function setNodeState(key, state) {
+    var n    = NODES[key];
+    var dot  = el(n.dot);
+    var prog = el(n.prog);
+    var rect = el(n.rect);
+
+    dot.classList.remove('sb-dot-running');
+
+    if (state === 'running') {
+      dot.style.fill         = '#3b82f6';
+      rect.style.stroke      = '#3b82f6';
+      rect.style.strokeWidth = '1.5';
+      dot.classList.add('sb-dot-running');
+    } else if (state === 'done') {
+      dot.style.fill         = n.color;
+      rect.style.stroke      = n.color;
+      rect.style.strokeWidth = '1';
+      prog.setAttribute('width', String(SB_MAX));
+    } else {
+      dot.style.fill         = '#475569';
+      rect.style.stroke      = '#161f30';
+      rect.style.strokeWidth = '1';
+      prog.setAttribute('width', '0');
     }
   }
 
-  async function cycle() {
-    // reset all
-    for (const key of ORDER) {
-      const n = NODES[key];
-      set(n.dot,  { fill: '#1e2840' });
-      set(n.prog, { width: '0' });
-      set(n.rect, { stroke: '#1c2840' });
-    }
-
-    // io nodes stay lit
-    await sleep(500);
-
-    for (const key of ORDER) {
-      const n = NODES[key];
-      const dur = DURATIONS[key];
-
-      // queued
-      set(n.dot,  { fill: '#f59e0b' });
-      set(n.rect, { stroke: 'rgba(245,158,11,0.4)' });
-      await sleep(500);
-
-      // running
-      set(n.dot,  { fill: '#3b82f6' });
-      set(n.rect, { stroke: 'rgba(59,130,246,0.5)' });
-      await animProg(n.prog, n.progMax, dur);
-
-      // done
-      set(n.dot,  { fill: '#10b981' });
-      set(n.rect, { stroke: 'rgba(16,185,129,0.35)' });
-      set(n.prog, { fill: '#10b981' });
-      await sleep(400);
-    }
-
-    await sleep(2400);
-    // reset prog fill color for next cycle
-    for (const key of ORDER) set(NODES[key].prog, { fill: '#3b82f6' });
-    cycle();
+  function setRunningProgress(key, fraction) {
+    var w = Math.round(Math.min(1, Math.max(0, fraction)) * SB_MAX);
+    el(NODES[key].prog).setAttribute('width', String(w));
   }
 
-  // Wait for SVG to be in DOM
-  window.addEventListener('DOMContentLoaded', () => { sleep(800).then(cycle); });
-})();
+  function setStatus(cls, text) {
+    sbPip.className        = 'sb-status-pip'  + (cls ? ' ' + cls : '');
+    sbText.className       = 'sb-status-text' + (cls ? ' ' + cls : '');
+    sbText.textContent     = text;
+  }
 
-// ── Scroll reveal ─────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const delay = +(e.target.dataset.delay || 0);
-      setTimeout(() => e.target.classList.add('in'), delay);
-      io.unobserve(e.target);
+  var nodeOrder = { rfd: 1, relax: 2, pymol: 3 };
+
+  function updateSidebar(activeEl, scrollTop) {
+    var sceneKey   = activeEl ? activeEl.dataset.scene : 'init';
+    var currentIdx = SCENE_ORDER.indexOf(sceneKey);
+
+    Object.keys(NODES).forEach(function (key) {
+      var nodeIdx = nodeOrder[key];
+      if (currentIdx > nodeIdx) {
+        setNodeState(key, 'done');
+      } else if (currentIdx === nodeIdx) {
+        setNodeState(key, 'running');
+        var sceneTop    = activeEl.offsetTop;
+        var sceneHeight = activeEl.offsetHeight;
+        var clientH     = mainScroll.clientHeight;
+        setRunningProgress(key, (scrollTop - sceneTop + clientH * 0.45) / sceneHeight);
+      } else {
+        setNodeState(key, 'idle');
+      }
     });
-  }, { threshold: 0.1 });
 
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-});
+    if (sceneKey === 'done') {
+      if (outDot) outDot.style.fill = '#10b981';
+      setStatus('done', 'pipeline.done');
+    } else if (sceneKey === 'init' || currentIdx < 0) {
+      if (outDot) outDot.style.fill = '#475569';
+      setStatus('', 'idle');
+    } else {
+      if (outDot) outDot.style.fill = '#475569';
+      var labels = { rfd: 'node.running · rfd', relax: 'node.running · relax', pymol: 'node.running · pymol' };
+      setStatus('running', labels[sceneKey] || 'running');
+    }
+  }
+
+  var scenes = document.querySelectorAll('.scene');
+
+  function getActiveScene(scrollTop) {
+    var active    = null;
+    var threshold = mainScroll.clientHeight * 0.5;
+    scenes.forEach(function (s) {
+      if (scrollTop + threshold >= s.offsetTop) active = s;
+    });
+    return active;
+  }
+
+  mainScroll.addEventListener('scroll', function () {
+    var scrollTop = mainScroll.scrollTop;
+    var maxScroll = mainScroll.scrollHeight - mainScroll.clientHeight;
+    progressBar.style.transform = 'scaleX(' + (maxScroll > 0 ? scrollTop / maxScroll : 0) + ')';
+    updateSidebar(getActiveScene(scrollTop), scrollTop);
+  });
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) entry.target.classList.add('active');
+    });
+  }, { root: mainScroll, threshold: 0.15 });
+
+  scenes.forEach(function (s) { observer.observe(s); });
+
+  setTimeout(function () {
+    var init = document.querySelector('.scene-init');
+    if (init) init.classList.add('active');
+  }, 200);
+
+})();
