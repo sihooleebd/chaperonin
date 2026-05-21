@@ -12,8 +12,12 @@
 </head>
 <body>
 
+<!-- ── Nav ── -->
 <nav>
-  <div class="nav-logo">Chaperonin <em>●</em></div>
+  <div class="nav-logo">
+    <div class="nav-mark"><div class="nav-mark-dot"></div></div>
+    Chaperonin
+  </div>
   <ul class="nav-links">
     <li><a href="#features">Features</a></li>
     <li><a href="#modules">Modules</a></li>
@@ -24,16 +28,35 @@
 
 <!-- ── Hero ── -->
 <section id="hero">
+
+  <!-- diagonal slash lines, purely decorative -->
+  <div class="hero-slashes" aria-hidden="true">
+    <svg viewBox="0 0 1440 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="1020" y1="0" x2="860" y2="900" stroke="rgba(22,31,48,0.9)" stroke-width="1"/>
+      <line x1="1080" y1="0" x2="920" y2="900" stroke="rgba(22,31,48,0.5)" stroke-width="1"/>
+      <line x1="1150" y1="0" x2="990" y2="900" stroke="rgba(22,31,48,0.25)" stroke-width="1"/>
+    </svg>
+  </div>
+
   <div class="hero-text">
-    <div class="hero-kicker"><span class="hero-kicker-pip"></span>Computational Biology Orchestration</div>
-    <h1 class="hero-h1">Wire tools.<br><span>Execute.</span></h1>
-    <p class="hero-sub">Chaperonin is a visual workflow engine for computational biology. Drag modules onto a canvas, wire them by data type, and run against a real Python backend — streamed live over WebSocket.</p>
+    <div class="hero-label">
+      <span class="hero-label-line"></span>
+      Computational Biology Orchestration
+    </div>
+
+    <h1 class="hero-h1">
+      Wire<br>tools.<br><em>Execute.</em>
+    </h1>
+
+    <p class="hero-sub">
+      Chaperonin is a visual workflow engine for computational biology.
+      Drag modules onto a node canvas, wire them by data type, and run against
+      a real Python backend — every event streamed live.
+    </p>
+
     <div class="hero-actions">
-      <a href="../frontend/index.html" class="btn-solid">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Open the App
-      </a>
-      <a href="#features" class="btn-ghost">See how it works</a>
+      <a href="../frontend/index.html" class="btn-solid">Open the App &nbsp;→</a>
+      <a href="#features" class="btn-ghost">How it works</a>
     </div>
   </div>
 
@@ -48,97 +71,99 @@
         </marker>
       </defs>
 
-      <!-- ── Input node ── -->
-      <rect x="30" y="8" width="240" height="52" rx="7" fill="#0f1420" stroke="rgba(16,185,129,0.3)" stroke-width="1.5"/>
+      <!-- Input node -->
+      <rect x="30" y="8" width="240" height="52" rx="7" fill="#0b0f18" stroke="rgba(16,185,129,0.28)" stroke-width="1.5"/>
       <rect x="30" y="8" width="240" height="3" rx="1.5" fill="#10b981"/>
       <text x="50" y="33" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#10b981" letter-spacing="1.5">INPUT</text>
-      <text x="50" y="49" font-family="JetBrains Mono,monospace" font-size="9" fill="#415570">scaffold_in · Structure.PDB</text>
-      <circle cx="150" cy="60" r="5" fill="#16a34a" stroke="#0a0d14" stroke-width="2"/>
+      <text x="50" y="49" font-family="JetBrains Mono,monospace" font-size="9" fill="#38506a">scaffold_in · Structure.PDB</text>
+      <circle cx="150" cy="60" r="5" fill="#16a34a" stroke="#07090e" stroke-width="2"/>
 
       <!-- Edge 1 -->
-      <path d="M 150 65 C 150 80 150 82 150 94" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-opacity="0.45" marker-end="url(#arr-g)"/>
-      <text x="158" y="81" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#16a34a" opacity="0.55">Structure.PDB</text>
+      <path d="M 150 65 C 150 80 150 82 150 94" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-opacity="0.4" marker-end="url(#arr-g)"/>
+      <text x="157" y="81" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#16a34a" opacity="0.5">Structure.PDB</text>
 
-      <!-- ── RFDiffusion node ── -->
-      <rect id="rfd-rect" x="30" y="94" width="240" height="98" rx="7" fill="#0f1420" stroke="#1c2840" stroke-width="1.5"/>
+      <!-- RFDiffusion node -->
+      <rect id="rfd-rect" x="30" y="94" width="240" height="98" rx="7" fill="#0b0f18" stroke="#161f30" stroke-width="1.5"/>
       <rect x="30" y="94" width="240" height="4" rx="2" fill="#8b5cf6"/>
-      <circle cx="150" cy="94" r="5" fill="#16a34a" stroke="#0a0d14" stroke-width="2"/>
-      <text x="50" y="120" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#dce8f8">RFDiffusion</text>
+      <circle cx="150" cy="94" r="5" fill="#16a34a" stroke="#07090e" stroke-width="2"/>
+      <text x="50" y="120" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#e4f0ff">RFDiffusion</text>
       <text x="50" y="135" font-family="Inter,sans-serif" font-size="8.5" fill="#8b5cf6" letter-spacing="0.5">design</text>
       <text x="178" y="120" font-family="JetBrains Mono,monospace" font-size="8" fill="#a78bfa">1× GPU · 24 GB</text>
-      <circle id="rfd-dot" cx="258" cy="134" r="5" fill="#1e2840"/>
-      <rect x="35" y="154" width="230" height="4" rx="2" fill="#1a2132"/>
+      <circle id="rfd-dot" cx="258" cy="134" r="5" fill="#1c2d45"/>
+      <rect x="35" y="154" width="230" height="4" rx="2" fill="#141c2a"/>
       <rect id="rfd-prog" x="35" y="154" width="0" height="4" rx="2" fill="#3b82f6"/>
-      <circle cx="150" cy="192" r="5" fill="#16a34a" stroke="#0a0d14" stroke-width="2"/>
+      <circle cx="150" cy="192" r="5" fill="#16a34a" stroke="#07090e" stroke-width="2"/>
 
       <!-- Edge 2 -->
-      <path d="M 150 197 C 150 212 150 214 150 226" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-opacity="0.45" marker-end="url(#arr-g)"/>
-      <text x="158" y="213" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#16a34a" opacity="0.55">Structure.PDB</text>
+      <path d="M 150 197 C 150 212 150 214 150 226" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-opacity="0.4" marker-end="url(#arr-g)"/>
+      <text x="157" y="213" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#16a34a" opacity="0.5">Structure.PDB</text>
 
-      <!-- ── Rosetta Relax node ── -->
-      <rect id="relax-rect" x="30" y="226" width="240" height="98" rx="7" fill="#0f1420" stroke="#1c2840" stroke-width="1.5"/>
+      <!-- Rosetta Relax node -->
+      <rect id="relax-rect" x="30" y="226" width="240" height="98" rx="7" fill="#0b0f18" stroke="#161f30" stroke-width="1.5"/>
       <rect x="30" y="226" width="240" height="4" rx="2" fill="#10b981"/>
-      <circle cx="150" cy="226" r="5" fill="#16a34a" stroke="#0a0d14" stroke-width="2"/>
-      <text x="50" y="252" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#dce8f8">Rosetta Relax</text>
+      <circle cx="150" cy="226" r="5" fill="#16a34a" stroke="#07090e" stroke-width="2"/>
+      <text x="50" y="252" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#e4f0ff">Rosetta Relax</text>
       <text x="50" y="267" font-family="Inter,sans-serif" font-size="8.5" fill="#10b981" letter-spacing="0.5">refinement</text>
       <text x="182" y="252" font-family="JetBrains Mono,monospace" font-size="8" fill="#34d399">8 cores · 8 GB</text>
-      <circle id="relax-dot" cx="258" cy="266" r="5" fill="#1e2840"/>
-      <rect x="35" y="286" width="230" height="4" rx="2" fill="#1a2132"/>
+      <circle id="relax-dot" cx="258" cy="266" r="5" fill="#1c2d45"/>
+      <rect x="35" y="286" width="230" height="4" rx="2" fill="#141c2a"/>
       <rect id="relax-prog" x="35" y="286" width="0" height="4" rx="2" fill="#3b82f6"/>
-      <circle cx="150" cy="324" r="5" fill="#16a34a" stroke="#0a0d14" stroke-width="2"/>
+      <circle cx="150" cy="324" r="5" fill="#16a34a" stroke="#07090e" stroke-width="2"/>
 
       <!-- Edge 3 -->
-      <path d="M 150 329 C 150 344 150 346 150 358" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-opacity="0.45" marker-end="url(#arr-g)"/>
-      <text x="158" y="345" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#16a34a" opacity="0.55">Structure.PDB</text>
+      <path d="M 150 329 C 150 344 150 346 150 358" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-opacity="0.4" marker-end="url(#arr-g)"/>
+      <text x="157" y="345" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#16a34a" opacity="0.5">Structure.PDB</text>
 
-      <!-- ── PyMOL node ── -->
-      <rect id="pymol-rect" x="30" y="358" width="240" height="98" rx="7" fill="#0f1420" stroke="#1c2840" stroke-width="1.5"/>
+      <!-- PyMOL node -->
+      <rect id="pymol-rect" x="30" y="358" width="240" height="98" rx="7" fill="#0b0f18" stroke="#161f30" stroke-width="1.5"/>
       <rect x="30" y="358" width="240" height="4" rx="2" fill="#f59e0b"/>
-      <circle cx="150" cy="358" r="5" fill="#16a34a" stroke="#0a0d14" stroke-width="2"/>
-      <text x="50" y="384" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#dce8f8">PyMOL</text>
+      <circle cx="150" cy="358" r="5" fill="#16a34a" stroke="#07090e" stroke-width="2"/>
+      <text x="50" y="384" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#e4f0ff">PyMOL</text>
       <text x="50" y="399" font-family="Inter,sans-serif" font-size="8.5" fill="#f59e0b" letter-spacing="0.5">visualization</text>
       <text x="218" y="384" font-family="JetBrains Mono,monospace" font-size="8" fill="#fbbf24">4 GB</text>
-      <circle id="pymol-dot" cx="258" cy="398" r="5" fill="#1e2840"/>
-      <rect x="35" y="418" width="230" height="4" rx="2" fill="#1a2132"/>
+      <circle id="pymol-dot" cx="258" cy="398" r="5" fill="#1c2d45"/>
+      <rect x="35" y="418" width="230" height="4" rx="2" fill="#141c2a"/>
       <rect id="pymol-prog" x="35" y="418" width="0" height="4" rx="2" fill="#3b82f6"/>
-      <circle cx="150" cy="456" r="5" fill="#db2777" stroke="#0a0d14" stroke-width="2"/>
+      <circle cx="150" cy="456" r="5" fill="#db2777" stroke="#07090e" stroke-width="2"/>
 
       <!-- Edge 4 -->
-      <path d="M 150 461 C 150 476 150 478 150 490" fill="none" stroke="#db2777" stroke-width="1.5" stroke-opacity="0.45" marker-end="url(#arr-p)"/>
-      <text x="158" y="477" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#db2777" opacity="0.55">Visual.PNG</text>
+      <path d="M 150 461 C 150 476 150 478 150 490" fill="none" stroke="#db2777" stroke-width="1.5" stroke-opacity="0.4" marker-end="url(#arr-p)"/>
+      <text x="157" y="477" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#db2777" opacity="0.5">Visual.PNG</text>
 
-      <!-- ── Output node ── -->
-      <rect x="30" y="490" width="240" height="52" rx="7" fill="#0f1420" stroke="rgba(245,158,11,0.3)" stroke-width="1.5"/>
+      <!-- Output node -->
+      <rect x="30" y="490" width="240" height="52" rx="7" fill="#0b0f18" stroke="rgba(245,158,11,0.28)" stroke-width="1.5"/>
       <rect x="30" y="490" width="240" height="3" rx="1.5" fill="#f59e0b"/>
-      <circle cx="150" cy="490" r="5" fill="#db2777" stroke="#0a0d14" stroke-width="2"/>
+      <circle cx="150" cy="490" r="5" fill="#db2777" stroke="#07090e" stroke-width="2"/>
       <text x="50" y="515" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#f59e0b" letter-spacing="1.5">OUTPUT</text>
-      <text x="50" y="531" font-family="JetBrains Mono,monospace" font-size="9" fill="#415570">render_out · Visual.PNG</text>
+      <text x="50" y="531" font-family="JetBrains Mono,monospace" font-size="9" fill="#38506a">render_out · Visual.PNG</text>
     </svg>
   </div>
 </section>
 
-<div class="rule"></div>
-
-<!-- ── Features ── -->
+<!-- ── Features — inside a parallelogram wrapper ── -->
+<div class="feat-wrap">
 <section id="features">
 
-  <!-- 01 DSL -->
+  <!-- 01 -->
   <div class="feat reveal">
+    <div class="feat-ghost" aria-hidden="true">01</div>
     <div class="feat-copy">
-      <div class="feat-num">01 — Visual &amp; Text</div>
+      <div class="feat-num"><span class="feat-num-line"></span>01 — Visual &amp; Text</div>
       <h2 class="feat-title">Canvas and DSL,<br>always in sync.</h2>
       <p class="feat-desc">
-        Drag modules, wire connections, and the DSL updates live. Edit the text directly and the canvas redraws. Both are the same pipeline — choose whichever you think in.
-        The <code>dsl</code> field is also what the backend receives — parse it directly or traverse the graph JSON, either works.
+        Drag modules, wire connections, and the DSL updates live. Edit the text
+        and the canvas redraws. Both are the same pipeline — choose whichever
+        you think in. The <code>dsl</code> field is also what the backend receives:
+        parse it directly or traverse the graph JSON, either works.
       </p>
     </div>
     <div class="feat-visual">
       <div class="code-block">
         <div class="code-block-header">
-          <span class="code-dot" style="background:#ef4444"></span>
-          <span class="code-dot" style="background:#f59e0b"></span>
-          <span class="code-dot" style="background:#10b981"></span>
-          <span style="margin-left:8px;font-family:var(--mono);font-size:10px;color:var(--muted)">pipeline.chap</span>
+          <span class="code-dot" style="background:#3a2030"></span>
+          <span class="code-dot" style="background:#2a2010"></span>
+          <span class="code-dot" style="background:#0e2a1a"></span>
+          <span class="code-fname">pipeline.chap</span>
         </div>
         <div class="code-block-body">
           <div><span class="c"># Chaperonin DSL</span></div>
@@ -162,69 +187,73 @@
     </div>
   </div>
 
-  <!-- 02 Types -->
-  <div class="feat feat--flip reveal" data-delay="80">
+  <!-- 02 -->
+  <div class="feat feat--flip reveal" data-delay="60">
+    <div class="feat-ghost" aria-hidden="true">02</div>
     <div class="feat-copy">
-      <div class="feat-num">02 — Type System</div>
+      <div class="feat-num"><span class="feat-num-line"></span>02 — Type System</div>
       <h2 class="feat-title">Connections that<br>know what they carry.</h2>
       <p class="feat-desc">
-        Every handle has a type. <code>Structure.PDB</code> satisfies an input declared as <code>Structure</code> — covariant by namespace. Union types accept multiple: <code>Structure.PDB | Sequence.FASTA</code>.
-        Incompatible connections are rejected before the run message is ever sent.
+        Every handle has a type. <code>Structure.PDB</code> satisfies an input
+        declared as <code>Structure</code> — covariant by namespace. Union inputs
+        accept multiple: <code>Structure.PDB | Sequence.FASTA</code>.
+        Incompatible connections are rejected before the run message is sent.
       </p>
     </div>
     <div class="feat-visual">
       <div class="type-tree">
         <div class="type-ns">Structure</div>
         <div class="type-row">
-          <span class="type-chip" style="background:rgba(34,197,94,0.1);color:#22c55e">.PDB</span>
-          <span class="type-chip" style="background:rgba(21,128,61,0.1);color:#4ade80">.mmCIF</span>
+          <span class="type-chip" style="background:rgba(34,197,94,0.08);color:#22c55e">.PDB</span>
+          <span class="type-chip" style="background:rgba(21,128,61,0.08);color:#4ade80">.mmCIF</span>
         </div>
         <div class="type-ns">Sequence</div>
         <div class="type-row">
-          <span class="type-chip" style="background:rgba(245,158,11,0.1);color:#f59e0b">.FASTA</span>
-          <span class="type-chip" style="background:rgba(251,146,60,0.1);color:#fb923c">.FASTQ</span>
+          <span class="type-chip" style="background:rgba(245,158,11,0.08);color:#f59e0b">.FASTA</span>
+          <span class="type-chip" style="background:rgba(251,146,60,0.08);color:#fb923c">.FASTQ</span>
         </div>
         <div class="type-ns">Visual</div>
         <div class="type-row">
-          <span class="type-chip" style="background:rgba(236,72,153,0.1);color:#ec4899">.PNG</span>
-          <span class="type-chip" style="background:rgba(190,24,93,0.1);color:#f472b6">.Web3D</span>
+          <span class="type-chip" style="background:rgba(236,72,153,0.08);color:#ec4899">.PNG</span>
+          <span class="type-chip" style="background:rgba(190,24,93,0.08);color:#f472b6">.Web3D</span>
         </div>
         <div class="type-ns">Text</div>
         <div class="type-row">
-          <span class="type-chip" style="background:rgba(148,163,184,0.08);color:#94a3b8">.RawString</span>
-          <span class="type-chip" style="background:rgba(100,116,139,0.08);color:#64748b">.Integer</span>
-          <span class="type-chip" style="background:rgba(100,116,139,0.08);color:#64748b">.Float</span>
-          <span class="type-chip" style="background:rgba(100,116,139,0.08);color:#64748b">.Score</span>
+          <span class="type-chip" style="background:rgba(148,163,184,0.06);color:#94a3b8">.RawString</span>
+          <span class="type-chip" style="background:rgba(100,116,139,0.06);color:#64748b">.Integer</span>
+          <span class="type-chip" style="background:rgba(100,116,139,0.06);color:#64748b">.Float</span>
+          <span class="type-chip" style="background:rgba(100,116,139,0.06);color:#64748b">.Score</span>
         </div>
-        <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border)">
-          <div style="font-size:10px;color:var(--muted);margin-bottom:10px;letter-spacing:0.5px;text-transform:uppercase;font-family:var(--mono)">Compatibility</div>
-          <div style="font-size:11px;line-height:2.2;font-family:var(--mono)">
-            <span style="color:#22c55e">Structure.PDB</span> <span style="color:var(--muted)">→</span> <span style="color:#22c55e">Structure</span>&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">✓ covariant</span><br>
-            <span style="color:#22c55e">Structure.PDB</span> <span style="color:var(--muted)">→</span> <span style="color:#f59e0b">Sequence</span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ef4444">✗ mismatch</span><br>
-            <span style="color:#22c55e">Structure.PDB</span> <span style="color:var(--muted)">→</span> <span style="color:#22c55e">Structure | </span><span style="color:#f59e0b">Seq…</span>&nbsp;<span style="color:var(--muted)">✓ union</span>
-          </div>
+        <div class="type-compat">
+          <span class="type-compat-label">Compatibility</span>
+          <span style="color:#22c55e">Structure.PDB</span> <span style="color:#38506a">→</span> <span style="color:#22c55e">Structure</span>&nbsp;&nbsp;&nbsp;<span style="color:#38506a">✓ covariant</span><br>
+          <span style="color:#22c55e">Structure.PDB</span> <span style="color:#38506a">→</span> <span style="color:#f59e0b">Sequence</span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ef4444">✗ mismatch</span><br>
+          <span style="color:#22c55e">Structure.PDB</span> <span style="color:#38506a">→</span> <span style="color:#22c55e">Structure</span> <span style="color:#38506a">|</span> <span style="color:#f59e0b">Seq…</span>&nbsp;&nbsp;<span style="color:#38506a">✓ union</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 03 Streaming -->
-  <div class="feat reveal" data-delay="80">
+  <!-- 03 -->
+  <div class="feat reveal" data-delay="60">
+    <div class="feat-ghost" aria-hidden="true">03</div>
     <div class="feat-copy">
-      <div class="feat-num">03 — Real-time Execution</div>
+      <div class="feat-num"><span class="feat-num-line"></span>03 — Real-time Execution</div>
       <h2 class="feat-title">Every event,<br>streamed live.</h2>
       <p class="feat-desc">
-        One persistent WebSocket. The backend topology-sorts the DAG and emits events as each node progresses — progress bars fill, log lines appear, nodes flip green as they complete.
-        Cancel anytime; the backend acknowledges per node.
+        One persistent WebSocket. The backend topology-sorts the DAG and emits
+        events as each node progresses — progress bars fill, log lines appear,
+        nodes flip green on completion. Cancel anytime; the backend acknowledges
+        per node.
       </p>
     </div>
     <div class="feat-visual">
       <div class="code-block">
         <div class="code-block-header">
-          <span class="code-dot" style="background:#ef4444"></span>
-          <span class="code-dot" style="background:#f59e0b"></span>
-          <span class="code-dot" style="background:#10b981"></span>
-          <span style="margin-left:8px;font-family:var(--mono);font-size:10px;color:var(--muted)">ws://localhost:8000/ws</span>
+          <span class="code-dot" style="background:#3a2030"></span>
+          <span class="code-dot" style="background:#2a2010"></span>
+          <span class="code-dot" style="background:#0e2a1a"></span>
+          <span class="code-fname">ws://localhost:8000/ws</span>
         </div>
         <div class="code-block-body">
           <div><span class="c">→ {"type":"run","pipeline":{…}}</span></div>
@@ -234,8 +263,8 @@
           <div><span style="color:#3b82f6">← {"type":"node.running","nodeId":"rfdiffusion_1"}</span></div>
           <div><span style="color:#3b82f6">← {"type":"node.progress",</span></div>
           <div><span style="color:#3b82f6">&nbsp;&nbsp;&nbsp;&nbsp;"nodeId":"rfdiffusion_1","current":5,"total":50}</span></div>
-          <div><span style="color:#94a3b8">← {"type":"node.log","nodeId":"rfdiffusion_1",</span></div>
-          <div><span style="color:#94a3b8">&nbsp;&nbsp;&nbsp;&nbsp;"line":"[5/50] loss=1.8 pLDDT=0.58"}</span></div>
+          <div><span style="color:#64748b">← {"type":"node.log","nodeId":"rfdiffusion_1",</span></div>
+          <div><span style="color:#64748b">&nbsp;&nbsp;&nbsp;&nbsp;"line":"[5/50] loss=1.8 pLDDT=0.58"}</span></div>
           <div><span class="f">← {"type":"node.done","nodeId":"rfdiffusion_1"}</span></div>
           <div>&nbsp;</div>
           <div><span class="c">  ··· rosetta_relax_1, pymol_1 ···</span></div>
@@ -247,30 +276,29 @@
   </div>
 
 </section>
-
-<div class="rule"></div>
+</div>
 
 <!-- ── Modules ── -->
 <section id="modules">
   <div class="modules-header reveal">
-    <span class="section-label">Module Registry</span>
-    <h2>Six tools. One canvas.</h2>
-    <p>Each module is a typed node. Add an entry to <code style="font-family:var(--mono);font-size:13px;color:#10b981">modules.js</code> and it appears in the palette, serializer, and DSL generator automatically.</p>
+    <span class="section-eyebrow">Module Registry</span>
+    <h2>Six tools.<br>One canvas.</h2>
+    <p>Add an entry to <code style="font-family:var(--mono);font-size:12px;color:#10b981">modules.js</code> and it appears in the palette, serializer, and DSL generator automatically.</p>
   </div>
 
   <div class="mod-grid">
 
-    <div class="mod-card reveal">
+    <div class="mod-card reveal" style="--accent:rgba(139,92,246,0.5)">
       <div class="mod-card-top">
         <div><div class="mod-name">RFDiffusion</div><div class="mod-id">RFDIFFUSION</div></div>
-        <span class="mod-cat" style="background:rgba(139,92,246,0.12);color:#a78bfa">Design</span>
+        <span class="mod-cat" style="background:rgba(139,92,246,0.1);color:#a78bfa">Design</span>
       </div>
       <div class="mod-desc">Backbone design via diffusion model. GPU-accelerated protein structure generation with configurable length and sampling cycles.</div>
       <div class="mod-ports">
         <div class="mod-port-col">
           <div class="mod-port-label">In</div>
           <div class="mod-port-item"><span class="mod-port-dot" style="background:#16a34a"></span><span style="color:#4ade80">pdb_file</span></div>
-          <div class="mod-port-item"><span class="mod-port-dot" style="background:#415570"></span><span style="color:#64748b">hotspot</span></div>
+          <div class="mod-port-item"><span class="mod-port-dot" style="background:#38506a"></span><span style="color:#64748b">hotspot</span></div>
         </div>
         <div class="mod-port-col">
           <div class="mod-port-label">Out</div>
@@ -284,10 +312,10 @@
       </div>
     </div>
 
-    <div class="mod-card reveal" data-delay="60">
+    <div class="mod-card reveal" data-delay="60" style="--accent:rgba(14,165,233,0.5)">
       <div class="mod-card-top">
         <div><div class="mod-name">AlphaFold</div><div class="mod-id">ALPHAFOLD</div></div>
-        <span class="mod-cat" style="background:rgba(14,165,233,0.12);color:#38bdf8">Prediction</span>
+        <span class="mod-cat" style="background:rgba(14,165,233,0.1);color:#38bdf8">Prediction</span>
       </div>
       <div class="mod-desc">Structure prediction from amino acid sequence. Runs all five models and returns the highest-confidence structure.</div>
       <div class="mod-ports">
@@ -307,10 +335,10 @@
       </div>
     </div>
 
-    <div class="mod-card reveal" data-delay="120">
+    <div class="mod-card reveal" data-delay="120" style="--accent:rgba(14,165,233,0.5)">
       <div class="mod-card-top">
         <div><div class="mod-name">RoseTTAFold</div><div class="mod-id">ROSETTAFOLD</div></div>
-        <span class="mod-cat" style="background:rgba(14,165,233,0.12);color:#38bdf8">Prediction</span>
+        <span class="mod-cat" style="background:rgba(14,165,233,0.1);color:#38bdf8">Prediction</span>
       </div>
       <div class="mod-desc">Two-track architecture for fast, accurate structure prediction. Also outputs a TM-score confidence estimate.</div>
       <div class="mod-ports">
@@ -331,10 +359,10 @@
       </div>
     </div>
 
-    <div class="mod-card reveal">
+    <div class="mod-card reveal" style="--accent:rgba(16,185,129,0.5)">
       <div class="mod-card-top">
         <div><div class="mod-name">Rosetta Relax</div><div class="mod-id">ROSETTA_RELAX</div></div>
-        <span class="mod-cat" style="background:rgba(16,185,129,0.1);color:#34d399">Refinement</span>
+        <span class="mod-cat" style="background:rgba(16,185,129,0.08);color:#34d399">Refinement</span>
       </div>
       <div class="mod-desc">FastRelax energy minimization. Generates multiple low-energy structures in parallel and returns the best scoring one.</div>
       <div class="mod-ports">
@@ -354,10 +382,10 @@
       </div>
     </div>
 
-    <div class="mod-card reveal" data-delay="60">
+    <div class="mod-card reveal" data-delay="60" style="--accent:rgba(245,158,11,0.5)">
       <div class="mod-card-top">
         <div><div class="mod-name">PyMOL</div><div class="mod-id">PYMOL</div></div>
-        <span class="mod-cat" style="background:rgba(245,158,11,0.1);color:#fbbf24">Visualization</span>
+        <span class="mod-cat" style="background:rgba(245,158,11,0.08);color:#fbbf24">Visualization</span>
       </div>
       <div class="mod-desc">Molecular visualization and rendering. Outputs both a high-resolution PNG and an interactive Web3D scene.</div>
       <div class="mod-ports">
@@ -377,10 +405,10 @@
       </div>
     </div>
 
-    <div class="mod-card reveal" data-delay="120">
+    <div class="mod-card reveal" data-delay="120" style="--accent:rgba(107,114,128,0.4)">
       <div class="mod-card-top">
         <div><div class="mod-name">PDB → FASTA</div><div class="mod-id">PDB_TO_FASTA</div></div>
-        <span class="mod-cat" style="background:rgba(107,114,128,0.12);color:#9ca3af">Converter</span>
+        <span class="mod-cat" style="background:rgba(107,114,128,0.1);color:#9ca3af">Converter</span>
       </div>
       <div class="mod-desc">Extract the amino acid sequence from a structure file. Bridges structure-based and sequence-based tool chains.</div>
       <div class="mod-ports">
@@ -402,119 +430,97 @@
   </div>
 </section>
 
-<div class="rule"></div>
-
-<!-- ── Protocol ── -->
+<!-- ── Protocol — diagonal top cut ── -->
 <section id="protocol">
   <div class="protocol-header reveal">
-    <span class="section-label">WebSocket Protocol</span>
-    <h2>One socket. Both directions.</h2>
-    <p>Frontend sends a graph; backend streams events as execution progresses. Every run terminates with <code style="font-family:var(--mono);font-size:13px;color:#10b981">pipeline.done</code> or <code style="font-family:var(--mono);font-size:13px;color:#ef4444">pipeline.error</code> — the frontend Promise hangs until one arrives.</p>
+    <span class="section-eyebrow">WebSocket Protocol</span>
+    <h2>One socket.<br>Both directions.</h2>
+    <p>Frontend sends a graph; backend streams events as execution progresses. Every run ends with <code style="font-family:var(--mono);font-size:12px;color:#10b981">pipeline.done</code> or <code style="font-family:var(--mono);font-size:12px;color:#ef4444">pipeline.error</code> — the frontend Promise hangs until one arrives.</p>
   </div>
 
-  <div class="seq-diagram reveal" data-delay="100">
+  <div class="seq-diagram reveal" data-delay="80">
 
     <div class="seq-col-header">Browser</div>
     <div class="seq-spacer"></div>
     <div class="seq-col-header">Python Backend</div>
 
-    <!-- run -->
     <div class="seq-msg seq-msg--left">
-      <div class="seq-bubble" style="border-color:rgba(59,130,246,0.4);background:rgba(59,130,246,0.06);color:#93c5fd">
-        run
-        <div class="seq-fields">pipeline: PipelinePayload</div>
+      <div class="seq-bubble" style="border-color:rgba(59,130,246,0.35);background:rgba(59,130,246,0.05);color:#93c5fd">
+        run <div class="seq-fields">pipeline: PipelinePayload</div>
       </div>
     </div>
     <div class="seq-arrow-col" style="color:#3b82f6">→</div>
     <div class="seq-msg seq-msg--right"></div>
 
-    <!-- pipeline.start -->
     <div class="seq-msg seq-msg--left"></div>
     <div class="seq-arrow-col" style="color:#10b981">←</div>
     <div class="seq-msg seq-msg--right">
-      <div class="seq-bubble" style="border-color:rgba(16,185,129,0.4);background:rgba(16,185,129,0.06);color:#6ee7b7">
-        pipeline.start
-        <div class="seq-fields">total: int</div>
+      <div class="seq-bubble" style="border-color:rgba(16,185,129,0.35);background:rgba(16,185,129,0.05);color:#6ee7b7">
+        pipeline.start <div class="seq-fields">total: int</div>
       </div>
     </div>
 
-    <!-- node.queued -->
     <div class="seq-msg seq-msg--left"></div>
     <div class="seq-arrow-col" style="color:#f59e0b">←</div>
     <div class="seq-msg seq-msg--right">
-      <div class="seq-bubble" style="border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.06);color:#fcd34d">
-        node.queued
-        <div class="seq-fields">nodeId: str</div>
+      <div class="seq-bubble" style="border-color:rgba(245,158,11,0.35);background:rgba(245,158,11,0.05);color:#fcd34d">
+        node.queued <div class="seq-fields">nodeId: str</div>
       </div>
     </div>
 
-    <!-- node.running -->
     <div class="seq-msg seq-msg--left"></div>
     <div class="seq-arrow-col" style="color:#3b82f6">←</div>
     <div class="seq-msg seq-msg--right">
-      <div class="seq-bubble" style="border-color:rgba(59,130,246,0.4);background:rgba(59,130,246,0.06);color:#93c5fd">
-        node.running
-        <div class="seq-fields">nodeId: str</div>
+      <div class="seq-bubble" style="border-color:rgba(59,130,246,0.35);background:rgba(59,130,246,0.05);color:#93c5fd">
+        node.running <div class="seq-fields">nodeId: str</div>
       </div>
     </div>
 
-    <!-- node.progress -->
     <div class="seq-msg seq-msg--left"></div>
     <div class="seq-arrow-col" style="color:#3b82f6">←</div>
     <div class="seq-msg seq-msg--right">
-      <div class="seq-bubble" style="border-color:rgba(59,130,246,0.3);background:rgba(59,130,246,0.04);color:#93c5fd">
-        node.progress
-        <div class="seq-fields">nodeId, current: int, total: int</div>
+      <div class="seq-bubble" style="border-color:rgba(59,130,246,0.28);background:rgba(59,130,246,0.03);color:#93c5fd">
+        node.progress <div class="seq-fields">nodeId, current: int, total: int</div>
       </div>
     </div>
 
-    <!-- node.log -->
     <div class="seq-msg seq-msg--left"></div>
-    <div class="seq-arrow-col" style="color:#415570">←</div>
+    <div class="seq-arrow-col" style="color:#38506a">←</div>
     <div class="seq-msg seq-msg--right">
-      <div class="seq-bubble" style="border-color:rgba(65,85,112,0.35);background:rgba(65,85,112,0.05);color:#94a3b8">
-        node.log
-        <div class="seq-fields">nodeId, line: str</div>
+      <div class="seq-bubble" style="border-color:rgba(56,80,106,0.35);background:rgba(56,80,106,0.05);color:#94a3b8">
+        node.log <div class="seq-fields">nodeId, line: str</div>
       </div>
     </div>
 
-    <!-- node.done -->
     <div class="seq-msg seq-msg--left"></div>
     <div class="seq-arrow-col" style="color:#10b981">←</div>
     <div class="seq-msg seq-msg--right">
-      <div class="seq-bubble" style="border-color:rgba(16,185,129,0.4);background:rgba(16,185,129,0.06);color:#6ee7b7">
-        node.done
-        <div class="seq-fields">nodeId: str</div>
+      <div class="seq-bubble" style="border-color:rgba(16,185,129,0.35);background:rgba(16,185,129,0.05);color:#6ee7b7">
+        node.done <div class="seq-fields">nodeId: str</div>
       </div>
     </div>
 
-    <!-- pipeline.done -->
     <div class="seq-msg seq-msg--left"></div>
     <div class="seq-arrow-col" style="color:#10b981">←</div>
     <div class="seq-msg seq-msg--right">
-      <div class="seq-bubble" style="border-color:rgba(16,185,129,0.5);background:rgba(16,185,129,0.1);color:#34d399;font-weight:700">
-        pipeline.done
-        <div class="seq-fields">terminal — Promise resolves</div>
+      <div class="seq-bubble" style="border-color:rgba(16,185,129,0.5);background:rgba(16,185,129,0.08);color:#34d399;font-weight:700">
+        pipeline.done <div class="seq-fields">terminal — Promise resolves</div>
       </div>
     </div>
 
-    <!-- cancel -->
-    <div class="seq-msg seq-msg--left" style="padding-top:20px">
-      <div class="seq-bubble" style="border-color:rgba(239,68,68,0.4);background:rgba(239,68,68,0.06);color:#fca5a5">
-        cancel
-        <div class="seq-fields">— no fields</div>
+    <div class="seq-msg seq-msg--left" style="padding-top:16px">
+      <div class="seq-bubble" style="border-color:rgba(239,68,68,0.35);background:rgba(239,68,68,0.05);color:#fca5a5">
+        cancel <div class="seq-fields">— no fields</div>
       </div>
     </div>
-    <div class="seq-arrow-col" style="color:#ef4444;padding-top:20px">→</div>
-    <div class="seq-msg seq-msg--right" style="padding-top:20px"></div>
+    <div class="seq-arrow-col" style="color:#ef4444;padding-top:16px">→</div>
+    <div class="seq-msg seq-msg--right" style="padding-top:16px"></div>
 
-    <!-- pipeline.error -->
     <div class="seq-msg seq-msg--left"></div>
     <div class="seq-arrow-col" style="color:#ef4444">←</div>
     <div class="seq-msg seq-msg--right">
-      <div class="seq-bubble" style="border-color:rgba(239,68,68,0.5);background:rgba(239,68,68,0.08);color:#f87171;font-weight:700">
-        pipeline.error
-        <div class="seq-fields">message: str — terminal — Promise rejects</div>
+      <div class="seq-bubble" style="border-color:rgba(239,68,68,0.5);background:rgba(239,68,68,0.07);color:#f87171;font-weight:700">
+        pipeline.error <div class="seq-fields">message: str — terminal — Promise rejects</div>
       </div>
     </div>
 
@@ -525,7 +531,10 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      <div class="footer-brand-logo">Chaperonin <em>●</em></div>
+      <div class="footer-brand-logo">
+        <div class="nav-mark"><div class="nav-mark-dot"></div></div>
+        Chaperonin
+      </div>
       <div class="footer-tagline">Visual workflow engine for computational biology. Built with React, ReactFlow, and Python.</div>
     </div>
     <div class="footer-team">
