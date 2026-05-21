@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chaperonin — Pipeline Orchestration for Computational Biology</title>
+  <title>Chaperonin — Visual Pipeline Orchestration for Computational Biology</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -11,222 +11,211 @@
 </head>
 <body>
 
-<div id="scroll-progress"></div>
+<!-- ── Nav ── -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nav-mark">
+      <svg viewBox="0 0 14 14" fill="none" width="14" height="14">
+        <path d="M2 7h10M7 2v10" stroke="#000" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="nav-name">Chaperonin</span>
+  </div>
+  <div class="nav-links">
+    <a href="#about" class="nav-link">What is it?</a>
+    <a href="https://github.com/sihooleebd/chaperonin" class="nav-link" target="_blank" rel="noopener">GitHub</a>
+    <a href="../frontend/" class="btn-nav">Open App</a>
+  </div>
+</nav>
 
-<div class="app">
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-head">
+      <p class="hero-eyebrow">Computational biology · Workflow orchestration</p>
+      <h1 class="hero-title">Drag. Connect. <em>Run.</em></h1>
+      <p class="hero-sub">A visual pipeline engine for protein design. Wire RFDiffusion, AlphaFold, Rosetta, and PyMOL together — then execute with one click.</p>
+    </div>
 
-  <!-- ── Sidebar ── -->
-  <aside class="sidebar">
-    <div class="sb-logo">
-      <div class="sb-logo-mark">
-        <svg viewBox="0 0 16 16" fill="none" width="16" height="16">
-          <path d="M3 8h10M8 3v10" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Node diagram -->
+    <div class="diagram-wrap">
+      <svg id="node-canvas" viewBox="0 0 600 460" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <!-- Dot grid pattern (mimics the app canvas) -->
+          <pattern id="dot-grid" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse">
+            <circle cx="0" cy="0" r="0.9" fill="#1a2540"/>
+          </pattern>
+          <!-- Vignette mask -->
+          <radialGradient id="vignette" cx="50%" cy="50%" r="50%">
+            <stop offset="40%" stop-color="white" stop-opacity="1"/>
+            <stop offset="100%" stop-color="white" stop-opacity="0"/>
+          </radialGradient>
+          <mask id="vignette-mask">
+            <rect width="600" height="460" fill="url(#vignette)"/>
+          </mask>
+          <!-- Glow filter for center node -->
+          <filter id="center-glow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="8" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <!-- Glow for pulse dots -->
+          <filter id="pulse-glow" x="-150%" y="-150%" width="400%" height="400%">
+            <feGaussianBlur stdDeviation="3.5" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- Dot grid background -->
+        <rect width="600" height="460" fill="url(#dot-grid)" mask="url(#vignette-mask)"/>
+
+        <!-- Pulsing ring around center -->
+        <circle class="center-ring" cx="300" cy="230" r="38" fill="none" stroke="#10b981" stroke-width="1"/>
+
+        <!--
+          Edges (lines from CENTER 300,230 to each peripheral node center)
+          All edge lengths ≈ 168px.  stroke-dasharray slightly over that.
+          JS toggles class "connected" to draw them in.
+
+          Node positions (CENTER=(300,230), RADIUS=168):
+          rfd         angle=120° → x=216, y=85
+          alphafold   angle=60°  → x=384, y=85
+          pymol       angle=0°   → x=468, y=230
+          pdb2fasta   angle=300° → x=384, y=375
+          rosetta     angle=240° → x=216, y=375
+          rosettafold angle=180° → x=132, y=230
+        -->
+        <line id="edge-rfd"         class="node-edge" style="--clr:#8b5cf6" x1="300" y1="230" x2="216" y2="85"/>
+        <line id="edge-alphafold"   class="node-edge" style="--clr:#3b82f6" x1="300" y1="230" x2="384" y2="85"/>
+        <line id="edge-pymol"       class="node-edge" style="--clr:#f59e0b" x1="300" y1="230" x2="468" y2="230"/>
+        <line id="edge-pdb2fasta"   class="node-edge" style="--clr:#14b8a6" x1="300" y1="230" x2="384" y2="375"/>
+        <line id="edge-rosetta"     class="node-edge" style="--clr:#10b981" x1="300" y1="230" x2="216" y2="375"/>
+        <line id="edge-rosettafold" class="node-edge" style="--clr:#6366f1" x1="300" y1="230" x2="132" y2="230"/>
+
+        <!-- Pulse dots (travel from center to node on Run) -->
+        <circle id="pulse-rfd"         class="pulse-dot" style="--clr:#8b5cf6" cx="300" cy="230" r="5" filter="url(#pulse-glow)"/>
+        <circle id="pulse-alphafold"   class="pulse-dot" style="--clr:#3b82f6" cx="300" cy="230" r="5" filter="url(#pulse-glow)"/>
+        <circle id="pulse-pymol"       class="pulse-dot" style="--clr:#f59e0b" cx="300" cy="230" r="5" filter="url(#pulse-glow)"/>
+        <circle id="pulse-pdb2fasta"   class="pulse-dot" style="--clr:#14b8a6" cx="300" cy="230" r="5" filter="url(#pulse-glow)"/>
+        <circle id="pulse-rosetta"     class="pulse-dot" style="--clr:#10b981" cx="300" cy="230" r="5" filter="url(#pulse-glow)"/>
+        <circle id="pulse-rosettafold" class="pulse-dot" style="--clr:#6366f1" cx="300" cy="230" r="5" filter="url(#pulse-glow)"/>
+
+        <!-- ── Peripheral nodes ── -->
+
+        <!-- RFDiffusion  216, 85 -->
+        <g class="tool-node" id="node-rfd" style="--clr:#8b5cf6; --float-delay:0.0s" transform="translate(216,85)">
+          <rect class="node-body" x="-54" y="-24" width="108" height="48" rx="8"/>
+          <text class="node-label" y="-4" text-anchor="middle" font-size="12" font-weight="600">RFDiffusion</text>
+          <text class="node-tag"  y="13" text-anchor="middle" font-size="9">design</text>
+        </g>
+
+        <!-- AlphaFold  384, 85 -->
+        <g class="tool-node" id="node-alphafold" style="--clr:#3b82f6; --float-delay:0.5s" transform="translate(384,85)">
+          <rect class="node-body" x="-54" y="-24" width="108" height="48" rx="8"/>
+          <text class="node-label" y="-4" text-anchor="middle" font-size="12" font-weight="600">AlphaFold</text>
+          <text class="node-tag"  y="13" text-anchor="middle" font-size="9">predict</text>
+        </g>
+
+        <!-- PyMOL  468, 230 -->
+        <g class="tool-node" id="node-pymol" style="--clr:#f59e0b; --float-delay:1.0s" transform="translate(468,230)">
+          <rect class="node-body" x="-48" y="-24" width="96" height="48" rx="8"/>
+          <text class="node-label" y="-4" text-anchor="middle" font-size="12" font-weight="600">PyMOL</text>
+          <text class="node-tag"  y="13" text-anchor="middle" font-size="9">render</text>
+        </g>
+
+        <!-- PDB→FASTA  384, 375 -->
+        <g class="tool-node" id="node-pdb2fasta" style="--clr:#14b8a6; --float-delay:1.5s" transform="translate(384,375)">
+          <rect class="node-body" x="-54" y="-24" width="108" height="48" rx="8"/>
+          <text class="node-label" y="-4" text-anchor="middle" font-size="12" font-weight="600">PDB → FASTA</text>
+          <text class="node-tag"  y="13" text-anchor="middle" font-size="9">convert</text>
+        </g>
+
+        <!-- Rosetta Relax  216, 375 -->
+        <g class="tool-node" id="node-rosetta" style="--clr:#10b981; --float-delay:2.0s" transform="translate(216,375)">
+          <rect class="node-body" x="-58" y="-24" width="116" height="48" rx="8"/>
+          <text class="node-label" y="-4" text-anchor="middle" font-size="12" font-weight="600">Rosetta Relax</text>
+          <text class="node-tag"  y="13" text-anchor="middle" font-size="9">refine</text>
+        </g>
+
+        <!-- RoseTTAFold  132, 230 -->
+        <g class="tool-node" id="node-rosettafold" style="--clr:#6366f1; --float-delay:2.5s" transform="translate(132,230)">
+          <rect class="node-body" x="-58" y="-24" width="116" height="48" rx="8"/>
+          <text class="node-label" y="-4" text-anchor="middle" font-size="12" font-weight="600">RoseTTAFold</text>
+          <text class="node-tag"  y="13" text-anchor="middle" font-size="9">predict</text>
+        </g>
+
+        <!-- ── Center node (rendered last, on top) ── -->
+        <g id="node-center" filter="url(#center-glow)">
+          <rect x="228" y="202" width="144" height="56" rx="10" fill="#0d1929" stroke="#10b981" stroke-width="1.5"/>
+          <text x="300" y="226" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="700" font-family="Inter,sans-serif">Chaperonin</text>
+          <text x="300" y="244" text-anchor="middle" fill="#10b981" font-size="9" font-weight="600" letter-spacing="1.5" font-family="JetBrains Mono,monospace">ORCHESTRATOR</text>
+        </g>
+      </svg>
+    </div><!-- /diagram-wrap -->
+
+    <div class="hero-foot">
+      <a href="../frontend/" class="btn-primary">Open App</a>
+      <button id="run-btn" class="btn-run">▶&nbsp;&nbsp;Run Pipeline</button>
+      <a href="https://github.com/sihooleebd/chaperonin" class="btn-ghost" target="_blank" rel="noopener">GitHub →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── About ── -->
+<section class="about" id="about">
+  <div class="about-inner">
+    <div class="about-lede">
+      <p class="about-eyebrow">What is Chaperonin?</p>
+      <h2 class="about-title">A canvas for<br>protein pipelines</h2>
+      <p class="about-body">Chaperonin is a typed, visual workflow engine for computational biology. You drag modules onto a node canvas, wire their inputs and outputs together, and hit Run. The frontend serializes the graph and sends it to a Python backend over WebSocket, which executes each tool in order and streams live logs back.</p>
+      <p class="about-body">The type system prevents bad connections — a <code>Structure.PDB</code> output won't connect to a <code>Sequence.FASTA</code> input. Every tool's resource requirements (GPU, memory) are declared upfront.</p>
+    </div>
+
+    <div class="about-steps">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <h3 class="step-title">Drag modules</h3>
+        <p class="step-body">Pull any tool from the palette onto the canvas. Each module exposes typed input and output handles. The palette groups tools by category: design, predict, refine, render, convert.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <h3 class="step-title">Wire connections</h3>
+        <p class="step-body">Drag from an output handle to a compatible input handle. Chaperonin enforces type compatibility — it won't let you connect a structure file to a sequence consumer. Unconnected required inputs block the Run button.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <h3 class="step-title">Run</h3>
+        <p class="step-body">Hit Run. Chaperonin serializes the graph to JSON, sends it to the Python orchestrator via WebSocket, and streams <code>node.running</code>, <code>node.progress</code>, and <code>node.log</code> events back in real time. Each node's status dot updates live.</p>
+      </div>
+    </div>
+
+    <div class="about-modules">
+      <p class="about-modules-label">Supported modules</p>
+      <div class="module-pills">
+        <span class="pill" style="--c:#8b5cf6">RFDiffusion</span>
+        <span class="pill" style="--c:#3b82f6">AlphaFold</span>
+        <span class="pill" style="--c:#6366f1">RoseTTAFold</span>
+        <span class="pill" style="--c:#10b981">Rosetta Relax</span>
+        <span class="pill" style="--c:#f59e0b">PyMOL</span>
+        <span class="pill" style="--c:#14b8a6">PDB → FASTA</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <div class="nav-mark" style="width:20px;height:20px;">
+        <svg viewBox="0 0 14 14" fill="none" width="10" height="10">
+          <path d="M2 7h10M7 2v10" stroke="#000" stroke-width="2.2" stroke-linecap="round"/>
         </svg>
       </div>
-      <span class="sb-logo-name">Chaperonin</span>
+      <span style="font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#475569;">Chaperonin v2</span>
     </div>
-
-    <div class="sb-section-label">Pipeline</div>
-
-    <!--
-      SVG coordinate system: viewBox "0 0 220 312"
-      Each node rect: x=10, width=200
-      Progress bars: x=10, max-width=200 (SB_MAX=200 in main.js)
-    -->
-    <svg viewBox="0 0 220 312" class="sb-pipeline" fill="none" xmlns="http://www.w3.org/2000/svg">
-
-      <!-- INPUT node (static) -->
-      <rect x="10" y="0" width="200" height="36" rx="4" fill="#0b0f18" stroke="#161f30" stroke-width="1"/>
-      <circle cx="26" cy="18" r="5" fill="#10b981"/>
-      <text x="40" y="23" fill="#94a3b8" font-size="10" font-family="JetBrains Mono,monospace" font-weight="500">INPUT</text>
-      <text x="208" y="23" fill="#334155" font-size="9" font-family="JetBrains Mono,monospace" text-anchor="end">scaffold.pdb</text>
-
-      <!-- Connector -->
-      <line x1="110" y1="36" x2="110" y2="52" stroke="#161f30" stroke-width="1.5" stroke-dasharray="3 3"/>
-
-      <!-- RFDiffusion node -->
-      <rect id="sb-rfd-rect" x="10" y="52" width="200" height="56" rx="4" fill="#0b0f18" stroke="#161f30" stroke-width="1"/>
-      <circle id="sb-rfd-dot" cx="26" cy="71" r="5" fill="#475569"/>
-      <text x="40" y="75" fill="#e2e8f0" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">RFDiffusion</text>
-      <text x="40" y="90" fill="#475569" font-size="9" font-family="JetBrains Mono,monospace">design · GPU · 24 GB</text>
-      <rect x="10" y="101" width="200" height="3" rx="1.5" fill="#0f172a"/>
-      <rect id="sb-rfd-prog" x="10" y="101" width="0" height="3" rx="1.5" fill="#8b5cf6"/>
-
-      <!-- Connector -->
-      <line x1="110" y1="108" x2="110" y2="124" stroke="#161f30" stroke-width="1.5" stroke-dasharray="3 3"/>
-
-      <!-- Rosetta Relax node -->
-      <rect id="sb-relax-rect" x="10" y="124" width="200" height="56" rx="4" fill="#0b0f18" stroke="#161f30" stroke-width="1"/>
-      <circle id="sb-relax-dot" cx="26" cy="143" r="5" fill="#475569"/>
-      <text x="40" y="147" fill="#e2e8f0" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">Rosetta Relax</text>
-      <text x="40" y="162" fill="#475569" font-size="9" font-family="JetBrains Mono,monospace">refine · CPU · 8 GB</text>
-      <rect x="10" y="173" width="200" height="3" rx="1.5" fill="#0f172a"/>
-      <rect id="sb-relax-prog" x="10" y="173" width="0" height="3" rx="1.5" fill="#10b981"/>
-
-      <!-- Connector -->
-      <line x1="110" y1="180" x2="110" y2="196" stroke="#161f30" stroke-width="1.5" stroke-dasharray="3 3"/>
-
-      <!-- PyMOL node -->
-      <rect id="sb-pymol-rect" x="10" y="196" width="200" height="56" rx="4" fill="#0b0f18" stroke="#161f30" stroke-width="1"/>
-      <circle id="sb-pymol-dot" cx="26" cy="215" r="5" fill="#475569"/>
-      <text x="40" y="219" fill="#e2e8f0" font-size="11" font-family="JetBrains Mono,monospace" font-weight="600">PyMOL</text>
-      <text x="40" y="234" fill="#475569" font-size="9" font-family="JetBrains Mono,monospace">render · CPU · 2 GB</text>
-      <rect x="10" y="245" width="200" height="3" rx="1.5" fill="#0f172a"/>
-      <rect id="sb-pymol-prog" x="10" y="245" width="0" height="3" rx="1.5" fill="#f59e0b"/>
-
-      <!-- Connector -->
-      <line x1="110" y1="252" x2="110" y2="268" stroke="#161f30" stroke-width="1.5" stroke-dasharray="3 3"/>
-
-      <!-- OUTPUT node (static) -->
-      <rect x="10" y="268" width="200" height="36" rx="4" fill="#0b0f18" stroke="#161f30" stroke-width="1"/>
-      <circle id="sb-out-dot" cx="26" cy="286" r="5" fill="#475569"/>
-      <text x="40" y="291" fill="#94a3b8" font-size="10" font-family="JetBrains Mono,monospace" font-weight="500">OUTPUT</text>
-      <text x="208" y="291" fill="#334155" font-size="9" font-family="JetBrains Mono,monospace" text-anchor="end">render.png</text>
-    </svg>
-
-    <div class="sb-status">
-      <div class="sb-status-pip" id="sb-pip"></div>
-      <span class="sb-status-text" id="sb-text">idle</span>
-    </div>
-  </aside>
-
-  <!-- ── Main scrollable panel ── -->
-  <main class="main-scroll" id="main-scroll">
-
-    <!-- Scene 0: Init -->
-    <section class="scene scene-init" data-scene="init">
-      <p class="si-eyebrow">// pipeline execution</p>
-      <h1 class="si-title">Orchestrate.<br><em>Design.</em><br>Fold.</h1>
-      <p class="si-sub">A typed, visual workflow engine for computational biology. Connect RFDiffusion, Rosetta, AlphaFold, and PyMOL into one reproducible pipeline — then run it.</p>
-      <div class="si-term">
-        <div class="si-term-prompt">$</div>
-        <span class="term-text">chaperonin run scaffold.yaml</span>
-      </div>
-      <div class="si-cta">
-        <a href="../frontend/" class="btn-primary">Launch App</a>
-        <a href="https://github.com/sihooleebd/chaperonin" class="btn-ghost" target="_blank" rel="noopener">View on GitHub →</a>
-      </div>
-      <div class="si-scroll-hint">scroll to execute ↓</div>
-    </section>
-
-    <!-- Scene 1: RFDiffusion -->
-    <section class="scene scene-node" data-scene="rfd"
-      style="--accent-color: #8b5cf6; background: var(--bg);">
-      <div class="scene-wm">RFD</div>
-      <div class="sn-eyebrow">
-        <span class="sn-eyebrow-dot"></span>
-        node.running &middot; 01&nbsp;/&nbsp;03
-      </div>
-      <h2 class="sn-name">RFDiffusion</h2>
-      <p class="sn-desc">Generates de novo protein backbones conditioned on functional hotspot residues. GPU-accelerated diffusion over backbone dihedral angles.</p>
-      <div class="sn-exec">
-        <div class="sn-exec-bar-bg">
-          <div class="sn-exec-bar-fill"></div>
-        </div>
-        <div class="sn-logs">
-          <div class="log-line"><span class="ll-ts">00:01</span><span class="ll-node">rfd&nbsp;&nbsp;</span>Loaded model weights&nbsp;<span class="ll-num">1.2 GB</span></div>
-          <div class="log-line"><span class="ll-ts">00:03</span><span class="ll-node">rfd&nbsp;&nbsp;</span>scaffold_in → T=200 β=0.0100</div>
-          <div class="log-line"><span class="ll-ts">00:18</span><span class="ll-node">rfd&nbsp;&nbsp;</span>[12/50] pLDDT=<span class="ll-num">0.61</span>&nbsp;loss=<span class="ll-num">1.47</span></div>
-          <div class="log-line"><span class="ll-ts">00:34</span><span class="ll-node">rfd&nbsp;&nbsp;</span>[33/50] pLDDT=<span class="ll-num">0.74</span>&nbsp;loss=<span class="ll-num">0.89</span></div>
-          <div class="log-line"><span class="ll-ts">00:47</span><span class="ll-node">rfd&nbsp;&nbsp;</span><span class="ll-ok">node.done ✓</span>&nbsp;designed_pdb</div>
-        </div>
-      </div>
-      <div class="sn-specs">
-        <div class="spec-item"><div class="spec-label">Hardware</div><div class="spec-value">1× A100</div></div>
-        <div class="spec-item"><div class="spec-label">Memory</div><div class="spec-value">24 GB</div></div>
-        <div class="spec-item"><div class="spec-label">Duration</div><div class="spec-value">~2 min</div></div>
-      </div>
-    </section>
-
-    <!-- Scene 2: Rosetta Relax -->
-    <section class="scene scene-node" data-scene="relax"
-      style="--accent-color: #10b981; background: var(--s1);">
-      <div class="scene-wm">RLX</div>
-      <div class="sn-eyebrow">
-        <span class="sn-eyebrow-dot"></span>
-        node.running &middot; 02&nbsp;/&nbsp;03
-      </div>
-      <h2 class="sn-name">Rosetta Relax</h2>
-      <p class="sn-desc">Energy minimization via all-atom force field. Removes clashes from diffusion output, optimizes side-chain rotamers, and computes per-residue scores.</p>
-      <div class="sn-exec">
-        <div class="sn-exec-bar-bg">
-          <div class="sn-exec-bar-fill"></div>
-        </div>
-        <div class="sn-logs">
-          <div class="log-line"><span class="ll-ts">00:49</span><span class="ll-node">relax</span>Input: rfd.designed_pdb</div>
-          <div class="log-line"><span class="ll-ts">00:51</span><span class="ll-node">relax</span>Score function: talaris2014</div>
-          <div class="log-line"><span class="ll-ts">01:12</span><span class="ll-node">relax</span>Cycle 3/5 — score:&nbsp;<span class="ll-num">−482.3</span></div>
-          <div class="log-line"><span class="ll-ts">01:28</span><span class="ll-node">relax</span>Cycle 5/5 — score:&nbsp;<span class="ll-num">−519.7</span>&nbsp;<span class="ll-ok">✓</span></div>
-          <div class="log-line"><span class="ll-ts">01:30</span><span class="ll-node">relax</span><span class="ll-ok">node.done ✓</span>&nbsp;relaxed_pdb</div>
-        </div>
-      </div>
-      <div class="sn-specs">
-        <div class="spec-item"><div class="spec-label">Hardware</div><div class="spec-value">16 CPU</div></div>
-        <div class="spec-item"><div class="spec-label">Memory</div><div class="spec-value">8 GB</div></div>
-        <div class="spec-item"><div class="spec-label">Duration</div><div class="spec-value">~40 sec</div></div>
-      </div>
-    </section>
-
-    <!-- Scene 3: PyMOL -->
-    <section class="scene scene-node" data-scene="pymol"
-      style="--accent-color: #f59e0b; background: var(--bg);">
-      <div class="scene-wm">PYM</div>
-      <div class="sn-eyebrow">
-        <span class="sn-eyebrow-dot"></span>
-        node.running &middot; 03&nbsp;/&nbsp;03
-      </div>
-      <h2 class="sn-name">PyMOL</h2>
-      <p class="sn-desc">Molecular visualization engine. Renders the relaxed structure as a publication-quality PNG with surface coloring, ray tracing, and hotspot highlighting.</p>
-      <div class="sn-exec">
-        <div class="sn-exec-bar-bg">
-          <div class="sn-exec-bar-fill"></div>
-        </div>
-        <div class="sn-logs">
-          <div class="log-line"><span class="ll-ts">01:31</span><span class="ll-node">pymol</span>Loading relaxed_pdb</div>
-          <div class="log-line"><span class="ll-ts">01:32</span><span class="ll-node">pymol</span>ray_shadows=1 antialias=2</div>
-          <div class="log-line"><span class="ll-ts">01:33</span><span class="ll-node">pymol</span>Rendering at 1920×1080</div>
-          <div class="log-line"><span class="ll-ts">01:35</span><span class="ll-node">pymol</span>Saved: render.png&nbsp;<span class="ll-num">4.2 MB</span></div>
-          <div class="log-line"><span class="ll-ts">01:36</span><span class="ll-node">pymol</span><span class="ll-ok">node.done ✓</span>&nbsp;render.png</div>
-        </div>
-      </div>
-      <div class="sn-specs">
-        <div class="spec-item"><div class="spec-label">Hardware</div><div class="spec-value">4 CPU</div></div>
-        <div class="spec-item"><div class="spec-label">Memory</div><div class="spec-value">2 GB</div></div>
-        <div class="spec-item"><div class="spec-label">Duration</div><div class="spec-value">~5 sec</div></div>
-      </div>
-    </section>
-
-    <!-- Scene 4: Done -->
-    <section class="scene scene-done" data-scene="done">
-      <p class="sd-eyebrow">// pipeline.done</p>
-      <h2 class="sd-headline">pipeline.done&nbsp;<span class="sd-check">✓</span></h2>
-      <p class="sd-sub">All 3 nodes executed successfully. Output written to <code>./chaperonin-out/render.png</code>.</p>
-      <div class="sd-stats">
-        <div class="sd-stat">
-          <div class="sd-stat-val">3</div>
-          <div class="sd-stat-label">Nodes</div>
-        </div>
-        <div class="sd-stat">
-          <div class="sd-stat-val">1m 36s</div>
-          <div class="sd-stat-label">Total time</div>
-        </div>
-        <div class="sd-stat">
-          <div class="sd-stat-val">0</div>
-          <div class="sd-stat-label">Errors</div>
-        </div>
-      </div>
-      <div class="sd-cta">
-        <a href="../frontend/" class="btn-primary">Launch App</a>
-        <a href="https://github.com/sihooleebd/chaperonin" class="btn-ghost" target="_blank" rel="noopener">View on GitHub →</a>
-      </div>
-      <div class="sd-credits">
-        Chaperonin v2 — typed, visual pipeline orchestration for computational biology<br>
-        RFDiffusion · Rosetta Suite · PyMOL · AlphaFold · PDB format support
-      </div>
-    </section>
-
-  </main>
-</div>
+    <a href="https://github.com/sihooleebd/chaperonin" class="footer-link" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</footer>
 
 <script src="main.js"></script>
 </body>
