@@ -1,0 +1,15 @@
+.git
+.gitignore
+**/node_modules
+**/__pycache__
+**/.pytest_cache
+**/*.pyc
+**/.DS_Store
+frontend/dist
+demo/
+landing/
+backend/tests/
+chaperonin_proposal.md
+CLAUDE.md
+Dockerfile
+.dockerignore

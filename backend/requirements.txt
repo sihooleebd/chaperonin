@@ -1,0 +1,8 @@
+# Chaperonin backend — runtime dependencies
+#
+# NONE. Orchestrator/scheduler/server are stdlib-only (asyncio + a small
+# hand-rolled WebSocket framer), so it runs on any Python 3.10+ with no install.
+#
+# The biology tools are delivered as Docker images (see modules/*.py IMAGE), so
+# the host only needs Docker for those. PDB_TO_FASTA runs on the host with no
+# container and no extra packages.
