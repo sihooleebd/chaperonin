@@ -1,7 +1,14 @@
-"""AlphaFold structure prediction from sequence (GPU, containerized).
+"""AlphaFold structure prediction from sequence via ColabFold (local CPU, no per-run internet).
 
-Defaults to a ColabFold image (remote MSA, no 2.5 TB local DBs). Image via
-``CHAPERONIN_ALPHAFOLD_IMAGE``. Rendering is downstream PyMOL (§10).
+Uses ColabFold in single-sequence mode: skips remote MSA lookup and runs the
+AlphaFold2 network with ESM-2 embeddings instead. Model weights (~2 GB) are
+downloaded on first run and cached in the chaperonin data volume at
+/root/.chaperonin/.cache/colabfold — subsequent runs are fully offline.
+
+Quality is comparable to ESMFold (lower than MSA-backed AlphaFold2 for
+multi-domain or evolutionarily sparse proteins, but good for most use cases).
+
+Image override: CHAPERONIN_ALPHAFOLD_IMAGE
 """
 
 import os
@@ -9,18 +16,24 @@ import os
 from chaperonin import module, Input, Output
 from chaperonin.types import Sequence, Structure
 
-IMAGE = os.environ.get("CHAPERONIN_ALPHAFOLD_IMAGE", "ghcr.io/sokrypton/colabfold:latest")
+IMAGE = os.environ.get("CHAPERONIN_ALPHAFOLD_IMAGE", "ghcr.io/sokrypton/colabfold:1.6.1-cuda12")
+
+# Cache dir inside the persistent chaperonin-data volume so weights survive
+# container restarts. Passed as XDG_CACHE_HOME to the child container.
+_CACHE_ROOT = os.environ.get("CHAPERONIN_DATA_ROOT", "/root/.chaperonin")
+_CACHE_ENV  = f"XDG_CACHE_HOME={_CACHE_ROOT}/.cache"
 
 
 @module(
     name="ALPHAFOLD",
     label="AlphaFold",
     category="prediction",
-    description="Structure prediction from sequence",
-    resources={"gpu": 1, "memory_gb": 40},
+    description="Structure prediction from sequence (local CPU, no internet after first run)",
+    resources={"gpu": 0, "memory_gb": 16},
     retention="permanent",
     container=IMAGE,
-    hardware_sensitive=True,
+    hardware_sensitive=False,
+    docker_args=["-e", _CACHE_ENV],
 )
 class AlphaFold:
     sequence: Input[Sequence.FASTA]
@@ -29,10 +42,19 @@ class AlphaFold:
     def execute(self, ctx):
         outdir = ctx.workdir / "af_out"
         outdir.mkdir(parents=True, exist_ok=True)
-        ctx.progress(0, 1, "running ColabFold")
-        ctx.run(["colabfold_batch", str(ctx.path(self.sequence)), str(outdir)])
+        ctx.log(
+            "Running ColabFold in single-sequence mode (no MSA, no internet after first run). "
+            "CPU fallback is automatic when no GPU is detected."
+        )
+        ctx.progress(0, 1, "running ColabFold (single-sequence)")
+        ctx.run([
+            "colabfold_batch",
+            "--msa-mode", "single_sequence",
+            str(ctx.path(self.sequence)),
+            str(outdir),
+        ])
         ranked = sorted(outdir.glob("*_rank_001*.pdb")) or sorted(outdir.glob("*.pdb"))
         if not ranked:
-            raise RuntimeError("AlphaFold/ColabFold produced no PDB output")
+            raise RuntimeError("ColabFold produced no PDB output")
         ctx.progress(1, 1, "done")
-        ctx.publish("structure", ranked[0], metadata={"source": "colabfold"})
+        ctx.publish("structure", ranked[0], metadata={"source": "colabfold_single_seq"})

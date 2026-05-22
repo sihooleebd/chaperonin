@@ -78,8 +78,8 @@ export const MODULES = {
     id: 'ALPHAFOLD',
     label: 'AlphaFold',
     category: 'prediction',
-    description: 'Structure prediction from sequence',
-    resources: { gpu: 1, memory_gb: 40 },
+    description: 'Structure prediction from sequence (ColabFold; CPU mode, remote MSA)',
+    resources: { gpu: 0, memory_gb: 16 },
     retention: 'permanent',
     inputs: [
       { id: 'sequence', type: 'Sequence.FASTA' },
