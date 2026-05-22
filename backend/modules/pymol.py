@@ -9,7 +9,7 @@ import os
 from chaperonin import module, Input, Param, Output
 from chaperonin.types import Structure, Text, Visual
 
-IMAGE = os.environ.get("CHAPERONIN_PYMOL_IMAGE", "pymol-open-source:latest")
+IMAGE = os.environ.get("CHAPERONIN_PYMOL_IMAGE", "pegi3s/pymol:latest")
 
 
 @module(

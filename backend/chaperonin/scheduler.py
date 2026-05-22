@@ -19,6 +19,7 @@ outputs, so the whole pipeline is testable before the real images exist.
 
 from __future__ import annotations
 
+import os
 import struct
 import tempfile
 import threading
@@ -28,6 +29,14 @@ import zlib
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable
+
+# When CHAPERONIN_DATA_VOLUME is set (Windows / Docker-in-Docker), child
+# containers receive a single named-volume mount covering the whole data root
+# instead of bind-mounting individual host paths (which don't exist on the
+# host when the orchestrator itself runs inside a container).
+_DATA_VOLUME = os.environ.get("CHAPERONIN_DATA_VOLUME", "").strip()
+_DATA_ROOT   = os.environ.get("CHAPERONIN_DATA_ROOT",
+                              str(Path.home() / ".chaperonin")).strip()
 
 from .context import Cancelled, ExecutionContext, Handle
 from .control_nodes import CONTROL_KINDS
@@ -418,12 +427,17 @@ def _run_compute_node(node, handles, edges, cancel, workroot, simulate, step_del
 
     emit({"type": "node.running", "nodeId": nid})
 
-    mounts = [(Path(workroot), "rw")]
-    for h in inputs.values():
-        if h is not None and getattr(h, "path", None) is not None:
-            parent = Path(h.path).resolve().parent
-            if (parent, "ro") not in mounts and not str(parent).startswith(str(workroot)):
-                mounts.append((parent, "ro"))
+    if _DATA_VOLUME:
+        # Named-volume mode: mount the whole data root rw so the child
+        # container can read uploads and write to its workdir in one shot.
+        mounts = [(_DATA_VOLUME, _DATA_ROOT, "rw")]
+    else:
+        mounts = [(Path(workroot), "rw")]
+        for h in inputs.values():
+            if h is not None and getattr(h, "path", None) is not None:
+                parent = Path(h.path).resolve().parent
+                if (parent, "ro") not in mounts and not str(parent).startswith(str(workroot)):
+                    mounts.append((parent, "ro"))
 
     ctx = ExecutionContext(
         nid, Path(workroot) / nid, emit,

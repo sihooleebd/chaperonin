@@ -58,8 +58,8 @@ class RFDiffusion:
             argv.append(f"ppi.hotspot_res=[{hotspot}]")
 
         ctx.log(
-            "Running RFdiffusion on CPU under linux/amd64 emulation. "
-            "Expect 30 min – 3 hours per design on Apple Silicon."
+            "Running RFdiffusion on CPU (no GPU detected). "
+            "Expect 30 min – 3 hours per design."
         )
         ctx.progress(0, n, "starting RFdiffusion")
         ctx.run(argv)

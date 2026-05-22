@@ -36,8 +36,13 @@ def build_docker_command(
     for key, value in (env or {}).items():
         cmd += ["-e", f"{key}={value}"]
     cmd += [str(a) for a in extra_args]
-    for host, mode in mounts:
-        cmd += ["-v", f"{host}:{host}:{mode}"]
+    for mount in mounts:
+        if len(mount) == 3:
+            src, dst, mode = mount
+        else:
+            src, mode = mount
+            dst = src  # legacy: host path == container path
+        cmd += ["-v", f"{src}:{dst}:{mode}"]
     cmd += ["-w", str(workdir)]
     cmd.append(image)
     cmd += [str(a) for a in argv]
