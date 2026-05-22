@@ -9,22 +9,26 @@ import ReactFlow, {
   BackgroundVariant,
 } from 'reactflow';
 
-import ChaperonNode from './components/ChaperonNode.jsx';
-import InputNode    from './components/InputNode.jsx';
-import OutputNode   from './components/OutputNode.jsx';
+import ChaperonNode    from './components/ChaperonNode.jsx';
+import InputNode       from './components/InputNode.jsx';
+import OutputNode      from './components/OutputNode.jsx';
+import VisualizerNode  from './components/VisualizerNode.jsx';
+import ControlNode     from './components/ControlNode.jsx';
 import Palette      from './components/Palette.jsx';
 import DSLPanel     from './components/DSLPanel.jsx';
 import LogPanel     from './components/LogPanel.jsx';
 
-import { MODULES, CATEGORIES, TYPE_COLORS, isCompatible } from './data/modules.js';
+import { MODULES, CATEGORIES, TYPE_COLORS, isCompatible, CONTROL_NODES } from './data/modules.js';
 import { generateDSL, parseDSL } from './utils/dsl.js';
 import { serializePipeline }     from './utils/graph.js';
 import { backend }               from './utils/backend.js';
 
 const NODE_TYPES = {
-  chaperonin:    ChaperonNode,
-  'input-node':  InputNode,
-  'output-node': OutputNode,
+  chaperonin:        ChaperonNode,
+  'input-node':      InputNode,
+  'output-node':     OutputNode,
+  'visualizer-node': VisualizerNode,
+  'control-node':    ControlNode,
 };
 
 function mkEdge(source, sourceHandle, target, targetHandle, type) {
@@ -43,9 +47,14 @@ function mkEdge(source, sourceHandle, target, targetHandle, type) {
   };
 }
 
+function visualTypeFor(moduleId) {
+  return moduleId === 'VISUALIZER' ? 'visualizer-node' : 'chaperonin';
+}
+
 function mkNode(id, moduleId, position, params = {}) {
   const mod = MODULES[moduleId];
-  return { id, type: 'chaperonin', position, data: { module: mod, varName: id, params, status: 'idle', progress: null } };
+  return { id, type: visualTypeFor(moduleId), position,
+           data: { module: mod, varName: id, params, status: 'idle', progress: null } };
 }
 
 function mkInputNode(id, position, label, dataType) {
@@ -58,20 +67,18 @@ function mkOutputNode(id, position, label) {
 
 const INIT_NODES = [
   mkInputNode('scaffold_in',    { x: 200, y: -70  }, 'scaffold',  'Structure.PDB'),
-  mkNode('rfdiffusion_1',  'RFDIFFUSION',  { x: 180, y: 90  }, { length: 100, cycle: 50 }),
-  mkNode('rosetta_relax_1','ROSETTA_RELAX', { x: 180, y: 320 }, { nstruct: 10 }),
-  mkNode('pymol_1',        'PYMOL',         { x: 180, y: 540 }, { style: 'cartoon' }),
-  mkOutputNode('render_out', { x: 200, y: 740 }, 'render'),
+  mkNode('rosetta_relax_1','ROSETTA_RELAX', { x: 180, y: 120 }, { nstruct: 1 }),
+  mkNode('pymol_1',        'PYMOL',         { x: 180, y: 360 }, { style: 'cartoon' }),
+  mkOutputNode('render_out', { x: 200, y: 560 }, 'render'),
 ];
 
 const INIT_EDGES = [
-  mkEdge('scaffold_in',   'value',        'rfdiffusion_1',  'pdb_file',  'Structure.PDB'),
-  mkEdge('rfdiffusion_1', 'designed_pdb', 'rosetta_relax_1','structure', 'Structure.PDB'),
-  mkEdge('rosetta_relax_1','relaxed',     'pymol_1',        'structure', 'Structure.PDB'),
-  mkEdge('pymol_1',       'rendered',     'render_out',     'value',     'Visual.PNG'),
+  mkEdge('scaffold_in',    'value',   'rosetta_relax_1','structure', 'Structure.PDB'),
+  mkEdge('rosetta_relax_1','relaxed', 'pymol_1',        'structure', 'Structure.PDB'),
+  mkEdge('pymol_1',        'rendered','render_out',     'value',     'Visual.PNG'),
 ];
 
-const INIT_COUNTERS = { rfdiffusion: 1, rosetta_relax: 1, pymol: 1, 'input-node': 0, 'output-node': 1 };
+const INIT_COUNTERS = { rfdiffusion: 0, rosetta_relax: 1, pymol: 1, 'input-node': 0, 'output-node': 1 };
 
 export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState(INIT_NODES);
@@ -85,6 +92,7 @@ export default function App() {
   const [toasts, setToasts]           = useState([]);
   const [ctxMenu, setCtxMenu]         = useState(null);
   const [connStatus, setConnStatus]   = useState('disconnected');
+  const [hostGpu, setHostGpu]         = useState(false);
 
   const rfWrapper  = useRef(null);
   const rfInstance = useRef(null);
@@ -93,6 +101,10 @@ export default function App() {
   // ── Backend connection lifecycle ─────────────────────────────
   useEffect(() => {
     backend.connect(setConnStatus);
+    fetch('/api/host_info')
+      .then((r) => r.ok ? r.json() : { gpu: false })
+      .then((info) => setHostGpu(Boolean(info.gpu)))
+      .catch(() => setHostGpu(false));
     return () => backend.disconnect();
   }, []);
 
@@ -130,15 +142,75 @@ export default function App() {
   const validatePipeline = useCallback(() => {
     const missing    = [];
     const typeErrors = [];
+    const gpuBlocked = [];
 
     for (const node of nodes) {
       if (node.type !== 'chaperonin') continue;
+      if (!hostGpu && (node.data.module.resources?.gpu ?? 0) > 0) {
+        gpuBlocked.push(`${node.data.varName} (${node.data.module.id})`);
+      }
       for (const inp of node.data.module.inputs) {
         const connected = edges.find((e) => e.target === node.id && e.targetHandle === inp.id);
         if (!connected) {
           missing.push(`${node.data.varName}.${inp.id} (${inp.type})`);
         } else if (connected.data && !connected.data.compatible) {
           typeErrors.push(`${node.data.varName}.${inp.id}: type mismatch`);
+        }
+      }
+    }
+
+    // Control-node validation: paired START_FOR for every END_FOR; IF condition wired.
+    for (const node of nodes) {
+      if (node.type !== 'control-node') continue;
+      const kind = node.data.kind;
+      if (kind === 'END_FOR') {
+        const edge = edges.find((e) => e.target === node.id && e.targetHandle === 'paired_start');
+        if (!edge) {
+          missing.push(`${node.data.varName}.paired_start (END_FOR needs a START_FOR)`);
+        } else {
+          const src = nodes.find((n) => n.id === edge.source);
+          if (!src || src.type !== 'control-node' || src.data.kind !== 'START_FOR') {
+            typeErrors.push(`${node.data.varName}.paired_start: source is not a START_FOR`);
+          }
+        }
+        const bodyEdge = edges.find((e) => e.target === node.id && e.targetHandle === 'body_out');
+        if (!bodyEdge) {
+          missing.push(`${node.data.varName}.body_out (END_FOR has no body)`);
+        }
+      }
+      if (kind === 'START_FOR') {
+        const countEdge = edges.find((e) => e.target === node.id && e.targetHandle === 'count');
+        if (!countEdge) {
+          missing.push(`${node.data.varName}.count (START_FOR needs a count)`);
+        }
+      }
+      if (kind === 'IF') {
+        const cond = edges.find((e) => e.target === node.id && e.targetHandle === 'condition');
+        if (!cond) {
+          missing.push(`${node.data.varName}.condition (IF needs a condition)`);
+        }
+        const val = edges.find((e) => e.target === node.id && e.targetHandle === 'value');
+        if (!val) {
+          missing.push(`${node.data.varName}.value (IF needs a value)`);
+        }
+      }
+      if (kind === 'COMPARE') {
+        for (const port of ['a', 'b']) {
+          if (!edges.find((e) => e.target === node.id && e.targetHandle === port)) {
+            missing.push(`${node.data.varName}.${port}`);
+          }
+        }
+      }
+      if (kind === 'SELECT') {
+        for (const port of ['from', 'by']) {
+          if (!edges.find((e) => e.target === node.id && e.targetHandle === port)) {
+            missing.push(`${node.data.varName}.${port}`);
+          }
+        }
+      }
+      if (kind === 'SAVE') {
+        if (!edges.find((e) => e.target === node.id && e.targetHandle === 'value')) {
+          missing.push(`${node.data.varName}.value (SAVE needs a value)`);
         }
       }
     }
@@ -159,8 +231,8 @@ export default function App() {
       })
     );
 
-    return { missing, typeErrors };
-  }, [nodes, edges, setNodes]);
+    return { missing, typeErrors, gpuBlocked };
+  }, [nodes, edges, setNodes, hostGpu]);
 
   // ── Run / Stop ───────────────────────────────────────────────
   const handleRun = useCallback(async () => {
@@ -171,7 +243,16 @@ export default function App() {
       return;
     }
 
-    const { missing, typeErrors } = validatePipeline();
+    const { missing, typeErrors, gpuBlocked } = validatePipeline();
+    if (gpuBlocked && gpuBlocked.length > 0) {
+      toast(
+        `Cannot run — ${gpuBlocked.length} module${gpuBlocked.length > 1 ? 's' : ''} require an NVIDIA GPU (not available on this host):\n` +
+        gpuBlocked.map((m) => `  • ${m}`).join('\n') +
+        '\nRight-click the node and delete it, or run chaperonin with CHAPERONIN_GPU_AVAILABLE=true on a GPU host.',
+        'error', 9000
+      );
+      return;
+    }
     if (missing.length > 0) {
       toast(
         `Cannot run — ${missing.length} unconnected input${missing.length > 1 ? 's' : ''}:\n` +
@@ -204,8 +285,36 @@ export default function App() {
         if (event.type === 'node.queued')    setNodeStatus(event.nodeId, 'queued');
         if (event.type === 'node.running')   setNodeStatus(event.nodeId, 'running');
         if (event.type === 'node.progress')  setNodeStatus(event.nodeId, 'running', { current: event.current, total: event.total });
-        if (event.type === 'node.done')      setNodeStatus(event.nodeId, 'done');
+        if (event.type === 'node.done') {
+          setNodes((nds) => {
+            const updated = nds.map((n) =>
+              n.id === event.nodeId
+                ? { ...n, data: { ...n.data, status: 'done', progress: null,
+                                   outputs: event.outputs || n.data.outputs || {} } }
+                : n
+            );
+            // Resolve displayUrl on any VISUALIZER fed by this node.
+            if (event.outputs) {
+              const downstreamVizEdges = edges.filter((e) =>
+                e.source === event.nodeId &&
+                updated.some((n) => n.id === e.target && n.type === 'visualizer-node')
+              );
+              if (downstreamVizEdges.length) {
+                return updated.map((n) => {
+                  const edge = downstreamVizEdges.find((e) => e.target === n.id);
+                  if (!edge) return n;
+                  const url = event.outputs[edge.sourceHandle];
+                  if (!url) return n;
+                  return { ...n, data: { ...n.data, displayUrl: url } };
+                });
+              }
+            }
+            return updated;
+          });
+        }
         if (event.type === 'node.cancelled') setNodeStatus(event.nodeId, 'idle');
+        if (event.type === 'node.skipped')   setNodeStatus(event.nodeId, 'skipped');
+        if (event.type === 'node.failed')    setNodeStatus(event.nodeId, 'failed');
         if (event.type === 'pipeline.done') {
           setNodes((nds) =>
             nds.map((n) =>
@@ -240,8 +349,14 @@ export default function App() {
     const id = e.dataTransfer.getData('application/chaperonin');
     if (!id || !rfInstance.current || !rfWrapper.current) return;
 
-    const bounds = rfWrapper.current.getBoundingClientRect();
-    const position = rfInstance.current.project({ x: e.clientX - bounds.left, y: e.clientY - bounds.top });
+    const position = rfInstance.current.screenToFlowPosition
+      ? rfInstance.current.screenToFlowPosition({ x: e.clientX, y: e.clientY })
+      : (() => {
+          const bounds = rfWrapper.current.getBoundingClientRect();
+          return rfInstance.current.project({
+            x: e.clientX - bounds.left, y: e.clientY - bounds.top,
+          });
+        })();
 
     let newNode;
 
@@ -259,6 +374,16 @@ export default function App() {
       newNode = { id: varName, type: 'output-node', position,
         data: { varName, label: `output_${n}`, inferredType: null, status: 'idle' } };
 
+    } else if (id in CONTROL_NODES) {
+      const spec = CONTROL_NODES[id];
+      const key = id.toLowerCase();
+      idCounters.current[key] = (idCounters.current[key] || 0) + 1;
+      const varName = `${key}_${idCounters.current[key]}`;
+      const defaultParams = Object.fromEntries(spec.params.map((p) => [p.id, p.default]));
+      newNode = { id: varName, type: 'control-node', position,
+        data: { kind: id, varName, params: defaultParams, status: 'idle',
+                inputs: spec.inputs, outputs: spec.outputs } };
+
     } else {
       const mod = MODULES[id];
       if (!mod) return;
@@ -266,7 +391,7 @@ export default function App() {
       idCounters.current[key] = (idCounters.current[key] || 0) + 1;
       const varName = `${key}_${idCounters.current[key]}`;
       const defaultParams = Object.fromEntries(mod.params.map((p) => [p.id, p.default]));
-      newNode = { id: varName, type: 'chaperonin', position,
+      newNode = { id: varName, type: visualTypeFor(id), position,
         data: { module: mod, varName, params: defaultParams, status: 'idle', progress: null } };
     }
 
@@ -283,12 +408,20 @@ export default function App() {
     let srcType;
     if (srcNode.type === 'input-node') {
       srcType = srcNode.data.dataType;
+    } else if (srcNode.type === 'control-node') {
+      const spec = CONTROL_NODES[srcNode.data.kind];
+      srcType = spec?.outputs?.find((o) => o.id === params.sourceHandle)?.type;
     } else {
       srcType = srcNode.data.module?.outputs?.find((o) => o.id === params.sourceHandle)?.type;
     }
 
     let tgtType;
-    if (tgtNode.type !== 'output-node') {
+    if (tgtNode.type === 'output-node') {
+      tgtType = null;
+    } else if (tgtNode.type === 'control-node') {
+      const spec = CONTROL_NODES[tgtNode.data.kind];
+      tgtType = spec?.inputs?.find((i) => i.id === params.targetHandle)?.type;
+    } else {
       tgtType = tgtNode.data.module?.inputs?.find((i) => i.id === params.targetHandle)?.type;
     }
 
@@ -452,7 +585,7 @@ export default function App() {
 
       {/* ── Main ── */}
       <div className="main">
-        <Palette />
+        <Palette hostGpu={hostGpu} />
 
         <div className="canvas-wrapper" ref={rfWrapper} onDrop={onDrop} onDragOver={onDragOver}>
           {nodes.length === 0 && (

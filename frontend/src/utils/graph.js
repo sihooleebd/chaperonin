@@ -1,24 +1,26 @@
 /**
- * Serialize the ReactFlow canvas state into the JSON payload that the Python
- * orchestrator backend expects to receive with a "run" message.
- *
- * PipelinePayload shape (also defined in backend.js protocol comment):
- * {
- *   nodes:    { id, module_id, params, inputs: [id,...], outputs: [{id,type},...] }[]
- *   io_nodes: { id, type, var_name, label, data_type }[]
- *   edges:    { source, source_handle, target, target_handle, data_type }[]
- *   dsl:      string   — the auto-generated DSL text
- * }
+ * Serialize the ReactFlow canvas state into the JSON payload the Python
+ * orchestrator backend expects with a "run" message.
  */
 export function serializePipeline(nodes, edges, dsl) {
   const computeNodes = nodes
-    .filter((n) => n.type === 'chaperonin')
+    .filter((n) => (n.type === 'chaperonin' || n.type === 'visualizer-node') && n.data?.module)
     .map((n) => ({
       id:        n.id,
       module_id: n.data.module.id,
       params:    { ...n.data.params },
       inputs:    n.data.module.inputs.map((i) => i.id),
       outputs:   n.data.module.outputs.map((o) => ({ id: o.id, type: o.type })),
+    }));
+
+  const controlNodes = nodes
+    .filter((n) => n.type === 'control-node')
+    .map((n) => ({
+      id:      n.id,
+      kind:    n.data.kind,
+      params:  { ...(n.data.params || {}) },
+      inputs:  n.data.inputs  || [],
+      outputs: n.data.outputs || [],
     }));
 
   const ioNodes = nodes
@@ -29,6 +31,8 @@ export function serializePipeline(nodes, edges, dsl) {
       var_name:  n.data.varName,
       label:     n.data.label,
       data_type: n.data.dataType ?? n.data.inferredType ?? null,
+      path:      n.data.path  ?? null,
+      value:     n.data.value ?? null,
     }));
 
   const serializedEdges = edges.map((e) => ({
@@ -39,5 +43,11 @@ export function serializePipeline(nodes, edges, dsl) {
     data_type:     e.data?.sourceType ?? null,
   }));
 
-  return { nodes: computeNodes, io_nodes: ioNodes, edges: serializedEdges, dsl };
+  return {
+    nodes: computeNodes,
+    control_nodes: controlNodes,
+    io_nodes: ioNodes,
+    edges: serializedEdges,
+    dsl,
+  };
 }

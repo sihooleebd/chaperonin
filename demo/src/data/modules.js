@@ -21,15 +21,36 @@ export const TYPE_COLORS = {
   'Text.Integer':    '#475569',
   'Text.Float':      '#334155',
   'Text.Score':      '#a3e635',
+  'Text.Bool':       '#22d3ee',
+  'List':            '#0ea5e9',
+  'List.Structure':       '#22c55e',
+  'List.Structure.PDB':   '#16a34a',
+  'List.Sequence.FASTA':  '#d97706',
+  'List.Text.RawString':  '#64748b',
+  'List.Text.Integer':    '#475569',
+  'List.Text.Float':      '#334155',
+  'List.Text.Score':      '#a3e635',
+  'List.Text.Bool':       '#22d3ee',
+  '*':                    '#94a3b8',
 };
 
 // Returns true if outputType can feed inputType
 export function isCompatible(outputType, inputType) {
   if (!outputType || !inputType) return false;
+  if (outputType === '*' || inputType === '*') return true;
   if (outputType === inputType) return true;
+  if (inputType.includes('|')) {
+    return inputType.split('|').some((t) => isCompatible(outputType, t.trim()));
+  }
+  const outIsList = outputType.startsWith('List.');
+  const inIsList = inputType.startsWith('List.');
+  if (outIsList !== inIsList) return false;
+  if (outIsList && inIsList) {
+    return isCompatible(outputType.slice(5), inputType.slice(5));
+  }
   // Parent accepts child: Input[Structure] accepts Structure.PDB
   if (outputType.startsWith(inputType + '.')) return true;
-  // Union types: "Structure.PDB | Sequence.FASTA"
+  // Union types (legacy fallback path below — kept for any other unions)
   if (inputType.includes('|')) {
     return inputType.split('|').some(t => isCompatible(outputType, t.trim()));
   }
@@ -41,16 +62,16 @@ export const MODULES = {
     id: 'RFDIFFUSION',
     label: 'RFDiffusion',
     category: 'design',
-    description: 'Backbone design via diffusion',
-    resources: { gpu: 1, memory_gb: 24 },
+    description: 'Backbone design via diffusion (CPU; very slow on arm64)',
+    resources: { gpu: 0, memory_gb: 16 },
     retention: 'permanent',
     inputs: [
       { id: 'pdb_file', type: 'Structure.PDB' },
-      { id: 'hotspot',  type: 'Text.RawString' },
     ],
     params: [
-      { id: 'length', type: 'Text.Integer', default: 100 },
-      { id: 'cycle',  type: 'Text.Integer', default: 50  },
+      { id: 'contigs',     type: 'Text.RawString', default: '50-100' },
+      { id: 'hotspot_res', type: 'Text.RawString', default: ''       },
+      { id: 'num_designs', type: 'Text.Integer',   default: 1        },
     ],
     outputs: [
       { id: 'designed_pdb', type: 'Structure.PDB' },
@@ -147,6 +168,7 @@ export const MODULES = {
     ],
     outputs: [
       { id: 'relaxed', type: 'Structure.PDB' },
+      { id: 'score',   type: 'Text.Score' },
     ],
     mockDuration: 4000,
     mockLogs: [
@@ -177,7 +199,7 @@ export const MODULES = {
     ],
     outputs: [
       { id: 'rendered', type: 'Visual.PNG'   },
-      { id: 'scene',    type: 'Visual.Web3D' },
+      { id: 'scene',    type: 'Structure.PDB' },
     ],
     mockDuration: 1800,
     mockLogs: [
@@ -187,6 +209,25 @@ export const MODULES = {
       'Rendering PNG (1920x1080)...',
       'Exporting Web3D scene...',
       'Done.',
+    ],
+  },
+
+  VISUALIZER: {
+    id: 'VISUALIZER',
+    label: 'Visualizer',
+    category: 'visualization',
+    description: 'Render a PNG, PDB, or 3D scene inline in the canvas (sink)',
+    resources: { gpu: 0, memory_gb: 1 },
+    retention: 'ephemeral',
+    inputs: [
+      { id: 'value', type: 'Visual.PNG | Visual.Web3D | Structure.PDB' },
+    ],
+    params: [],
+    outputs: [],
+    mockDuration: 300,
+    mockLogs: [
+      'Receiving content...',
+      'Ready for inline display.',
     ],
   },
 
@@ -218,6 +259,72 @@ export const MODULES = {
 export function handleLeft(index, total) {
   return `${((index + 0.5) / total) * 100}%`;
 }
+
+export const CONTROL_CATEGORIES = {
+  control:  { label: 'Control',  color: '#f97316' },
+  variable: { label: 'Variable', color: '#a855f7' },
+  utility:  { label: 'Utility',  color: '#94a3b8' },
+};
+
+export const CONTROL_NODES = {
+  START_FOR: {
+    id: 'START_FOR', label: 'Start For', kind: 'control', category: 'control',
+    description: 'Begin a counted loop',
+    inputs:  [{ id: 'count', type: 'Text.Integer' }],
+    outputs: [{ id: 'iter', type: 'Text.Integer' }, { id: 'gate', type: '*' }],
+    params:  [{ id: 'loop_label', type: 'Text.RawString', default: 'loop' }],
+  },
+  END_FOR: {
+    id: 'END_FOR', label: 'End For', kind: 'control', category: 'control',
+    description: 'Close a loop; results = List<body_out>',
+    inputs:  [{ id: 'paired_start', type: '*' }, { id: 'body_out', type: '*' }],
+    outputs: [{ id: 'results', type: '*' }],
+    params:  [],
+  },
+  SAVE: {
+    id: 'SAVE', label: 'Save', kind: 'variable', category: 'variable',
+    description: 'Store value into a named variable',
+    inputs:  [{ id: 'value', type: '*' }],
+    outputs: [{ id: 'value', type: '*' }],
+    params:  [{ id: 'name', type: 'Text.RawString', default: 'var' }],
+  },
+  GET: {
+    id: 'GET', label: 'Get', kind: 'variable', category: 'variable',
+    description: 'Read a named variable from the active scope',
+    inputs:  [],
+    outputs: [{ id: 'value', type: '*' }],
+    params:  [{ id: 'name', type: 'Text.RawString', default: 'var' }],
+  },
+  IF: {
+    id: 'IF', label: 'If', kind: 'control', category: 'control',
+    description: 'Forward value to if_true or if_false based on condition',
+    inputs:  [{ id: 'value', type: '*' }, { id: 'condition', type: 'Text.Bool' }],
+    outputs: [{ id: 'if_true', type: '*' }, { id: 'if_false', type: '*' }],
+    params:  [],
+  },
+  COMPARE: {
+    id: 'COMPARE', label: 'Compare', kind: 'utility', category: 'utility',
+    description: 'Compare two numbers; result is Text.Bool',
+    inputs: [
+      { id: 'a', type: 'Text.Integer | Text.Float | Text.Score' },
+      { id: 'b', type: 'Text.Integer | Text.Float | Text.Score' },
+    ],
+    outputs: [{ id: 'result', type: 'Text.Bool' }],
+    params:  [{ id: 'op', type: 'Text.RawString', default: 'lt',
+                choices: ['lt', 'le', 'eq', 'ne', 'ge', 'gt'] }],
+  },
+  SELECT: {
+    id: 'SELECT', label: 'Select', kind: 'utility', category: 'utility',
+    description: 'Pick one item from a list by parallel-list scoring',
+    inputs: [
+      { id: 'from', type: '*' },
+      { id: 'by', type: 'List.Text.Float | List.Text.Integer | List.Text.Score' },
+    ],
+    outputs: [{ id: 'value', type: '*' }],
+    params:  [{ id: 'mode', type: 'Text.RawString', default: 'min',
+                choices: ['min', 'max', 'first', 'last'] }],
+  },
+};
 
 // Selectable types for InputNode
 export const INPUT_TYPES = [

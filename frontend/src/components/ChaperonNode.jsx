@@ -10,6 +10,14 @@ const RETENTION_BADGE = {
 
 export default function ChaperonNode({ data, selected }) {
   const { module: mod, status = 'idle', progress, missingInputs = [], typeErrInputs = [] } = data;
+  if (!mod) {
+    return (
+      <div className="chap-node" style={{ padding: 12, color: '#ef4444', fontSize: 11 }}>
+        ⚠ invalid node: module spec missing<br />
+        ({data.varName || 'unnamed'})
+      </div>
+    );
+  }
   const cat = CATEGORIES[mod.category] || { color: '#6b7280' };
   const ret = RETENTION_BADGE[mod.retention] || RETENTION_BADGE.standard;
   const hasError = missingInputs.length > 0 || typeErrInputs.length > 0;

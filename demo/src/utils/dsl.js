@@ -1,4 +1,15 @@
-import { MODULES } from '../data/modules';
+import { MODULES, CONTROL_NODES } from '../data/modules';
+
+// keyword -> control-node id
+const CONTROL_KEYWORDS = {
+  start_for: 'START_FOR',
+  end_for:   'END_FOR',
+  save:      'SAVE',
+  get:       'GET',
+  if_:       'IF',
+  compare:   'COMPARE',
+  select:    'SELECT',
+};
 
 function topoSort(nodes, edges) {
   const graph = {};
@@ -16,8 +27,10 @@ function topoSort(nodes, edges) {
 
 // Returns "varName" for InputNode sources, "varName.handle" for everything else
 function srcRef(srcNode, sourceHandle) {
-  if (srcNode.type === 'input-node') return srcNode.data.varName;
-  return `${srcNode.data.varName}.${sourceHandle}`;
+  if (!srcNode || !srcNode.data) return '???';
+  if (srcNode.type === 'input-node') return srcNode.data.varName ?? srcNode.id;
+  const vn = srcNode.data.varName ?? srcNode.id;
+  return `${vn}.${sourceHandle}`;
 }
 
 export function generateDSL(nodes, edges) {
@@ -38,14 +51,12 @@ export function generateDSL(nodes, edges) {
     const node = nodeMap[nodeId];
     if (!node) continue;
 
-    // ── Input node ──
     if (node.type === 'input-node') {
       const { varName, dataType = 'Structure.PDB', label } = node.data;
       lines.push(`${varName} = input(${dataType}, label="${label || varName}")`);
       continue;
     }
 
-    // ── Output node ──
     if (node.type === 'output-node') {
       const inEdge = (incoming[nodeId] || [])[0];
       if (inEdge) {
@@ -57,8 +68,41 @@ export function generateDSL(nodes, edges) {
       continue;
     }
 
-    // ── Module node ──
+    // Control nodes — emit minimal DSL line using the node's kind/params.
+    if (node.type === 'control-node') {
+      const { kind, varName = nodeId, params: cparams = {} } = node.data;
+      const inEdges = incoming[nodeId] || [];
+      const refFor = (handle) => {
+        const e = inEdges.find((x) => x.targetHandle === handle);
+        if (!e) return '???';
+        const src = nodeMap[e.source];
+        return srcRef(src, e.sourceHandle);
+      };
+      const paramStr = Object.entries(cparams)
+        .map(([k, v]) => typeof v === 'string' ? `${k}="${v}"` : `${k}=${v}`)
+        .join(', ');
+      if (kind === 'START_FOR') {
+        lines.push(`${varName} = start_for(count=${refFor('count')}${paramStr ? ', ' + paramStr : ''})`);
+      } else if (kind === 'END_FOR') {
+        lines.push(`${varName} = end_for(paired_start=${refFor('paired_start')}, body_out=${refFor('body_out')})`);
+      } else if (kind === 'SAVE') {
+        lines.push(`${varName} = save(value=${refFor('value')}${paramStr ? ', ' + paramStr : ''})`);
+      } else if (kind === 'GET') {
+        lines.push(`${varName} = get(${paramStr})`);
+      } else if (kind === 'IF') {
+        lines.push(`${varName} = if_(value=${refFor('value')}, condition=${refFor('condition')})`);
+      } else if (kind === 'COMPARE') {
+        lines.push(`${varName} = compare(a=${refFor('a')}, b=${refFor('b')}${paramStr ? ', ' + paramStr : ''})`);
+      } else if (kind === 'SELECT') {
+        lines.push(`${varName} = select(from=${refFor('from')}, by=${refFor('by')}${paramStr ? ', ' + paramStr : ''})`);
+      } else {
+        lines.push(`# unknown control kind: ${kind}`);
+      }
+      continue;
+    }
+
     const { module: mod, varName, params = {} } = node.data;
+    if (!mod) continue;  // malformed node — skip rather than crash
     const inEdges = incoming[nodeId] || [];
     const args = [];
 
@@ -80,11 +124,11 @@ export function generateDSL(nodes, edges) {
     lines.push(`${varName} = ${mod.id}(${args.join(', ')})`);
   }
 
-  // Fallback: implicit outputs for terminal module nodes when no OutputNodes exist
   if (!hasOutputNodes) {
     const hasSrc = new Set(edges.map((e) => e.source));
     for (const node of nodes) {
-      if (node.type !== 'chaperonin') continue;
+      if (node.type !== 'chaperonin' && node.type !== 'visualizer-node') continue;
+      if (!node.data?.module) continue;
       if (!hasSrc.has(node.id)) {
         for (const out of node.data.module.outputs) {
           lines.push(`output(${node.data.varName}.${out.id}, name="${out.id}")`);
@@ -120,11 +164,10 @@ export function parseDSL(text, existingNodes) {
   const lines = text.split('\n').filter((l) => l.trim() && !l.trim().startsWith('#'));
 
   const nodes = [];
-  const pendingOutputEdges = []; // { srcVar, srcHandle, outVarName }
+  const pendingOutputEdges = [];
   let autoY = 80;
 
   for (const line of lines) {
-    // input(...) statement
     const inMatch = line.match(/^(\w+)\s*=\s*input\(\s*([^,)]+)(?:,\s*label="([^"]*)")?\)/);
     if (inMatch) {
       const [, varName, dataType, label] = inMatch;
@@ -138,7 +181,6 @@ export function parseDSL(text, existingNodes) {
       continue;
     }
 
-    // output(...) statement
     const outMatch = line.match(/^output\((\w+)(?:\.(\w+))?,\s*name="([^"]*)"\)/);
     if (outMatch) {
       const [, srcVar, srcHandle, name] = outMatch;
@@ -154,10 +196,43 @@ export function parseDSL(text, existingNodes) {
       continue;
     }
 
-    // module assignment
     const modMatch = line.match(/^(\w+)\s*=\s*(\w+)\s*\(([^)]*)\)/);
     if (!modMatch) continue;
     const [, varName, moduleId, argsStr] = modMatch;
+
+    // ── Control-flow primitives ──
+    const ctrlKind = CONTROL_KEYWORDS[moduleId];
+    if (ctrlKind) {
+      const spec = CONTROL_NODES[ctrlKind];
+      const args = parseArgs(argsStr);
+      const params = {};
+      const inputRefs = {};
+      for (const [key, val] of Object.entries(args)) {
+        const stripped = val.replace(/^["']|["']$/g, '');
+        if (spec.params.find((p) => p.id === key)) {
+          params[key] = isNaN(stripped) || stripped === '' ? stripped : Number(stripped);
+        } else if (spec.inputs.find((i) => i.id === key)) {
+          if (val === '???') continue;
+          const dot = val.indexOf('.');
+          if (dot === -1) {
+            inputRefs[key] = { srcVar: val, srcHandle: 'value' };
+          } else {
+            inputRefs[key] = { srcVar: val.slice(0, dot), srcHandle: val.slice(dot + 1) };
+          }
+        }
+      }
+      nodes.push({
+        id: varName,
+        type: 'control-node',
+        position: posMap[varName] || { x: 220, y: autoY },
+        data: { kind: ctrlKind, varName, params, status: 'idle',
+                inputs: spec.inputs, outputs: spec.outputs },
+      });
+      nodes[nodes.length - 1]._inputRefs = inputRefs;
+      autoY += 180;
+      continue;
+    }
+
     const mod = MODULES[moduleId];
     if (!mod) continue;
 
@@ -171,7 +246,6 @@ export function parseDSL(text, existingNodes) {
         params[key] = isNaN(stripped) || stripped === '' ? stripped : Number(stripped);
       } else if (mod.inputs.find((i) => i.id === key)) {
         if (val === '???') continue;
-        // "varName.handle" or just "varName" (for input-node refs)
         const dot = val.indexOf('.');
         if (dot === -1) {
           inputRefs[key] = { srcVar: val, srcHandle: 'value' };
@@ -183,17 +257,15 @@ export function parseDSL(text, existingNodes) {
 
     nodes.push({
       id: varName,
-      type: 'chaperonin',
+      type: moduleId === 'VISUALIZER' ? 'visualizer-node' : 'chaperonin',
       position: posMap[varName] || { x: 220, y: autoY },
       data: { module: mod, varName, params, status: 'idle', progress: null },
     });
     autoY += 220;
 
-    // Store input refs for edge building
     nodes[nodes.length - 1]._inputRefs = inputRefs;
   }
 
-  // Build edges from module input refs
   const edges = [];
   for (const node of nodes) {
     const refs = node._inputRefs || {};
@@ -213,7 +285,6 @@ export function parseDSL(text, existingNodes) {
     }
   }
 
-  // Build edges for output nodes
   for (const { srcVar, srcHandle, outVarName } of pendingOutputEdges) {
     const srcNode = nodes.find((n) => n.data?.varName === srcVar);
     const outNode = nodes.find((n) => n.id === outVarName);

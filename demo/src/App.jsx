@@ -9,9 +9,11 @@ import ReactFlow, {
   BackgroundVariant,
 } from 'reactflow';
 
-import ChaperonNode from './components/ChaperonNode.jsx';
-import InputNode    from './components/InputNode.jsx';
-import OutputNode   from './components/OutputNode.jsx';
+import ChaperonNode    from './components/ChaperonNode.jsx';
+import InputNode       from './components/InputNode.jsx';
+import OutputNode      from './components/OutputNode.jsx';
+import VisualizerNode  from './components/VisualizerNode.jsx';
+import ControlNode     from './components/ControlNode.jsx';
 import Palette      from './components/Palette.jsx';
 import DSLPanel     from './components/DSLPanel.jsx';
 import LogPanel     from './components/LogPanel.jsx';
@@ -22,9 +24,11 @@ import { runSimulation } from './utils/simulation.js';
 
 // ── Stable node type map ──────────────────────────────────────
 const NODE_TYPES = {
-  chaperonin:   ChaperonNode,
-  'input-node':  InputNode,
-  'output-node': OutputNode,
+  chaperonin:        ChaperonNode,
+  'input-node':      InputNode,
+  'output-node':     OutputNode,
+  'visualizer-node': VisualizerNode,
+  'control-node':    ControlNode,
 };
 
 // ── Helper: make edge with type label ────────────────────────
@@ -47,7 +51,7 @@ function mkEdge(source, sourceHandle, target, targetHandle, type) {
 function mkNode(id, moduleId, position, params = {}) {
   const mod = MODULES[moduleId];
   return {
-    id, type: 'chaperonin', position,
+    id, type: moduleId === 'VISUALIZER' ? 'visualizer-node' : 'chaperonin', position,
     data: { module: mod, varName: id, params, status: 'idle', progress: null },
   };
 }
@@ -273,7 +277,8 @@ export default function App() {
       idCounters.current[key] = (idCounters.current[key] || 0) + 1;
       const varName = `${key}_${idCounters.current[key]}`;
       const defaultParams = Object.fromEntries(mod.params.map((p) => [p.id, p.default]));
-      newNode = { id: varName, type: 'chaperonin', position,
+      const visualType = id === 'VISUALIZER' ? 'visualizer-node' : 'chaperonin';
+      newNode = { id: varName, type: visualType, position,
         data: { module: mod, varName, params: defaultParams, status: 'idle', progress: null } };
     }
 
