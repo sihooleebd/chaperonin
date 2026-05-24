@@ -1,4 +1,4 @@
-# Chaperonin
+<img src="./assets/logo-light.svg" width="200" alt="Alt text">
 
 **A modular workflow engine for computational biology.**
 
@@ -88,7 +88,7 @@ Adding a new module is one Python file under `backend/modules/`. The `@module` d
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  Frontend (React + ReactFlow, served from chaperonin   │
+│  Frontend (React + ReactFlow, served from chaperonin    │
 │  container as static files)                             │
 │    canvas  ⇄  DSL editor  ⇄  log panel  ⇄  inline 3D    │
 └────────────────────┬────────────────────────────────────┘
