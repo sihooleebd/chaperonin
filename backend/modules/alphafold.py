@@ -14,7 +14,7 @@ Image override: CHAPERONIN_ALPHAFOLD_IMAGE
 import os
 
 from chaperonin import module, Input, Output
-from chaperonin.types import Sequence, Structure
+from chaperonin.types import Sequence, Structure, Text
 
 IMAGE = os.environ.get("CHAPERONIN_ALPHAFOLD_IMAGE", "ghcr.io/sokrypton/colabfold:1.6.1-cuda12")
 
@@ -36,8 +36,9 @@ _CACHE_ENV  = f"XDG_CACHE_HOME={_CACHE_ROOT}/.cache"
     docker_args=["-e", _CACHE_ENV],
 )
 class AlphaFold:
-    sequence: Input[Sequence.FASTA]
+    sequence:  Input[Sequence.FASTA]
     structure: Output[Structure.PDB]
+    pae_json:  Output[Text.RawString]
 
     def execute(self, ctx):
         outdir = ctx.workdir / "af_out"
@@ -56,5 +57,11 @@ class AlphaFold:
         ranked = sorted(outdir.glob("*_rank_001*.pdb")) or sorted(outdir.glob("*.pdb"))
         if not ranked:
             raise RuntimeError("ColabFold produced no PDB output")
+        pae_files = (
+            sorted(outdir.glob("*_predicted_aligned_error_v1.json"))
+            or sorted(outdir.glob("*.json"))
+        )
         ctx.progress(1, 1, "done")
         ctx.publish("structure", ranked[0], metadata={"source": "colabfold_single_seq"})
+        if pae_files:
+            ctx.publish("pae_json", pae_files[0])

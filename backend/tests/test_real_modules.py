@@ -20,11 +20,13 @@ EXPECTED = {
         "outputs": [{"id": "designed_pdb", "type": "Structure.PDB"}]},
     "ALPHAFOLD": {"category": "prediction", "retention": "permanent",
         "inputs": [{"id": "sequence", "type": "Sequence.FASTA"}], "params": [],
-        "outputs": [{"id": "structure", "type": "Structure.PDB"}]},
-    "ROSETTAFOLD": {"category": "prediction", "retention": "permanent",
-        "inputs": [{"id": "sequence", "type": "Sequence.FASTA"}], "params": [],
         "outputs": [{"id": "structure", "type": "Structure.PDB"},
-                    {"id": "score", "type": "Text.Score"}]},
+                    {"id": "pae_json",  "type": "Text.RawString"}]},
+    "DESIGN_EVAL": {"category": "prediction", "retention": "ephemeral",
+        "inputs": [{"id": "structure", "type": "Structure.PDB"},
+                   {"id": "pae_json",  "type": "Text.RawString"}], "params": [],
+        "outputs": [{"id": "plddt", "type": "Text.Score"},
+                    {"id": "ipae",  "type": "Text.Score"}]},
     "ROSETTA_RELAX": {"category": "refinement", "retention": "standard",
         "inputs": [{"id": "structure", "type": "Structure.PDB"}],
         "params": [{"id": "nstruct", "type": "Text.Integer", "default": 10}],
@@ -63,7 +65,7 @@ class TestRealModules(unittest.TestCase):
                 self.assertEqual(got[key], want[key], f"{mid}.{key}")
 
     def test_containerized_declare_image(self):
-        for mid in ("RFDIFFUSION", "ALPHAFOLD", "ROSETTAFOLD", "ROSETTA_RELAX", "PYMOL"):
+        for mid in ("RFDIFFUSION", "ALPHAFOLD", "ROSETTA_RELAX", "PYMOL"):
             self.assertTrue(REGISTRY[mid].container, mid)
 
     def test_pdb_to_fasta_runs_on_host(self):

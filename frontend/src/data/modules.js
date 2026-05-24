@@ -86,24 +86,26 @@ export const MODULES = {
     ],
     params: [],
     outputs: [
-      { id: 'structure', type: 'Structure.PDB' },
+      { id: 'structure', type: 'Structure.PDB'  },
+      { id: 'pae_json',  type: 'Text.RawString' },
     ],
   },
 
-  ROSETTAFOLD: {
-    id: 'ROSETTAFOLD',
-    label: 'RoseTTAFold',
+  DESIGN_EVAL: {
+    id: 'DESIGN_EVAL',
+    label: 'Design Evaluator',
     category: 'prediction',
-    description: 'Structure prediction (RoseTTAFold)',
-    resources: { gpu: 1, memory_gb: 32 },
-    retention: 'permanent',
+    description: 'Compute mean pLDDT and interface PAE from AlphaFold outputs',
+    resources: { gpu: 0, memory_gb: 4 },
+    retention: 'ephemeral',
     inputs: [
-      { id: 'sequence', type: 'Sequence.FASTA' },
+      { id: 'structure', type: 'Structure.PDB'   },
+      { id: 'pae_json',  type: 'Text.RawString'  },
     ],
     params: [],
     outputs: [
-      { id: 'structure', type: 'Structure.PDB' },
-      { id: 'score',     type: 'Text.Score' },
+      { id: 'plddt', type: 'Text.Score' },
+      { id: 'ipae',  type: 'Text.Score' },
     ],
   },
 
