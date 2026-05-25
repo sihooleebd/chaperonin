@@ -12,8 +12,8 @@
     height: 841mm;
     color: #141414;
     font-family: 'Charter', 'Source Serif Pro', 'Cambria', 'Georgia', 'Apple SD Gothic Neo', 'Noto Serif KR', 'Noto Sans KR', serif;
-    font-size: 11pt;
-    line-height: 1.42;
+    font-size: 12pt;
+    line-height: 1.48;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
@@ -105,7 +105,7 @@
   .body-col {
     display: flex;
     flex-direction: column;
-    gap: 5mm;
+    gap: 3.5mm;
     min-height: 0;
   }
 
@@ -114,7 +114,7 @@
   .section-title {
     font-family: 'Helvetica Neue', 'Inter', system-ui, sans-serif;
     font-weight: 700;
-    font-size: 16pt;
+    font-size: 18pt;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #141414;
@@ -132,7 +132,7 @@
     font-family: 'Charter', 'Georgia', serif;
     font-style: italic;
     font-weight: 400;
-    font-size: 10.5pt;
+    font-size: 12pt;
     letter-spacing: 0;
     text-transform: none;
     color: #555;
@@ -159,7 +159,7 @@
   }
   .panel h4 {
     font-family: 'Helvetica Neue', 'Inter', system-ui, sans-serif;
-    font-size: 9.5pt;
+    font-size: 11pt;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: #141414;
@@ -173,16 +173,16 @@
   .motivation .diagram-box { padding: 2.5mm 3mm; }
   .lede {
     font-family: 'Charter', 'Georgia', serif;
-    font-size: 14pt;
-    line-height: 1.32;
+    font-size: 15.5pt;
+    line-height: 1.34;
     margin: 0;
     color: #141414;
   }
   .lede b { color: #1a4a8a; }
   .lede-sub {
     margin-top: 2.5mm;
-    font-size: 10.5pt;
-    line-height: 1.42;
+    font-size: 14pt;
+    line-height: 1.5;
     color: #444;
     font-style: italic;
   }
@@ -191,7 +191,7 @@
   .workflow-list {
     display: flex;
     flex-direction: column;
-    gap: 1.6mm;
+    gap: 1mm;
     flex: 0 0 auto;
   }
   .workflow-list .step {
@@ -201,7 +201,7 @@
     border: 0.3mm solid #141414;
     background: #ffffff;
     flex: 0 0 auto;
-    min-height: 14mm;
+    min-height: 10mm;
     overflow: hidden;
   }
   .workflow-list .step .head {
@@ -215,7 +215,7 @@
   }
   .workflow-list .step .head .num {
     font-family: 'JetBrains Mono', 'Menlo', monospace;
-    font-size: 8.5pt;
+    font-size: 10pt;
     color: #1a4a8a;
     font-weight: 700;
   }
@@ -230,7 +230,7 @@
   .workflow-list .step .desc {
     padding: 2mm 4mm;
     font-family: 'Helvetica Neue', 'Inter', sans-serif;
-    font-size: 9.5pt;
+    font-size: 11pt;
     color: #444;
     line-height: 1.4;
     display: flex;
@@ -268,22 +268,22 @@
   .arch-side .pill-grid {
     grid-template-columns: 1fr;
     gap: 1mm;
-    font-size: 9pt;
+    font-size: 11pt;
   }
   .arch-side .pill { padding-bottom: 0.6mm; }
-  .arch-side .pill .v { font-size: 8pt; }
+  .arch-side .pill .v { font-size: 10pt; }
   .arch-side .type-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 2mm 3mm;
     margin-top: 0.5mm;
   }
-  .arch-side .type-grid .ns { font-size: 9pt; }
-  .arch-side .type-grid .subs { font-size: 7.8pt; line-height: 1.4; }
+  .arch-side .type-grid .ns { font-size: 11pt; }
+  .arch-side .type-grid .subs { font-size: 10pt; line-height: 1.4; }
   .pill-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5mm 4mm;
-    font-size: 9.5pt;
+    font-size: 11pt;
   }
   .pill {
     display: flex; justify-content: space-between; align-items: baseline; gap: 3mm;
@@ -291,7 +291,7 @@
     padding-bottom: 0.8mm;
   }
   .pill .k { font-family: 'Helvetica Neue', 'Inter', sans-serif; font-weight: 600; color: #141414; }
-  .pill .v { font-family: 'JetBrains Mono', 'Menlo', monospace; font-size: 8.5pt; color: #1a4a8a; text-align: right; }
+  .pill .v { font-family: 'JetBrains Mono', 'Menlo', monospace; font-size: 10pt; color: #1a4a8a; text-align: right; }
   .type-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -300,11 +300,11 @@
   }
   .type-grid .ns {
     font-family: 'Helvetica Neue', 'Inter', sans-serif;
-    font-weight: 700; color: #141414; font-size: 9.5pt; margin-bottom: 0.3mm;
+    font-weight: 700; color: #141414; font-size: 11pt; margin-bottom: 0.3mm;
   }
   .type-grid .subs {
     font-family: 'JetBrains Mono', 'Menlo', monospace;
-    color: #1a4a8a; font-size: 8pt; line-height: 1.5;
+    color: #1a4a8a; font-size: 10pt; line-height: 1.5;
   }
 
   /* ---------- §04 Translation ---------- */
@@ -328,14 +328,14 @@
   }
   .translation .tcol .lbl {
     font-family: 'Helvetica Neue', 'Inter', sans-serif;
-    font-size: 7.5pt;
+    font-size: 10pt;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: #555;
   }
   .translation .tcol .ttl {
     font-family: 'Helvetica Neue', 'Inter', sans-serif;
-    font-weight: 700; font-size: 10.5pt; color: #141414;
+    font-weight: 700; font-size: 11pt; color: #141414;
     margin-bottom: 0.5mm;
   }
   .translation .tcol .body { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
@@ -352,8 +352,8 @@
   pre.dsl-mini {
     margin: 0;
     font-family: 'JetBrains Mono', 'Menlo', monospace;
-    font-size: 7.2pt;
-    line-height: 1.33;
+    font-size: 9.5pt;
+    line-height: 1.38;
     color: #141414;
     white-space: pre;
     overflow: hidden;
@@ -381,8 +381,8 @@
   pre.code {
     margin: 0;
     font-family: 'JetBrains Mono', 'Menlo', monospace;
-    font-size: 6.4pt;
-    line-height: 1.12;
+    font-size: 9.5pt;
+    line-height: 1.2;
     color: #141414;
     background: #ffffff;
     border: 0.3mm solid #141414;
@@ -403,8 +403,8 @@
   pre.code .typ { color: #1a4a8a; }
   .pitch {
     font-family: 'Charter', 'Georgia', serif;
-    font-size: 9.5pt;
-    line-height: 1.15;
+    font-size: 12pt;
+    line-height: 1.4;
     color: #141414;
     margin: 0;
     grid-column: 1 / span 2;
@@ -415,9 +415,9 @@
     grid-column: 2;
     grid-row: 1;
     min-width: 0;
-    height: 22mm;
-    min-height: 22mm;
-    max-height: 22mm;
+    height: 42mm;
+    min-height: 42mm;
+    max-height: 42mm;
     border: 0.3mm dashed #b5b5b5;
     background: #fcfcfc;
     padding: 1.2mm;
@@ -430,11 +430,11 @@
   .ext-flow svg { width: 100%; height: 100%; display: block; }
 
   /* ---------- §06 Results (vertical stack of 3 figures) ---------- */
-  .results-vert { display: flex; flex-direction: column; gap: 4mm; flex: 1; min-height: 0; justify-content: flex-start; }
+  .results-vert { display: flex; flex-direction: column; gap: 2mm; flex: 1; min-height: 0; justify-content: flex-start; overflow: hidden; }
   .results-vert .figure {
     display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    gap: 2.5mm;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 3mm;
     align-items: start;
     flex: 0 0 auto;
   }
@@ -475,13 +475,10 @@
   }
   .results-vert .figure .caption {
     font-family: 'Helvetica Neue', 'Inter', sans-serif;
-    font-size: 9pt;
-    line-height: 1.34;
+    font-size: 11pt;
+    line-height: 1.38;
     color: #2a2a2a;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0 1mm;
+    padding: 0 0.5mm;
   }
   .results-vert .figure .caption b { color: #141414; }
   .results-vert .figure .caption .fignum { color: #1a4a8a; font-weight: 700; margin-right: 1.5mm; }
@@ -496,14 +493,14 @@
   }
   .testimonial-note {
     font-family: 'Helvetica Neue', 'Inter', sans-serif;
-    font-size: 7.4pt;
+    font-size: 10pt;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: #777;
   }
   .testimonial-list {
     display: grid;
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-rows: 1fr;
     gap: 1.8mm;
     flex: 1;
     min-height: 0;
@@ -532,7 +529,7 @@
   }
   .testimonial-kicker {
     font-family: 'Helvetica Neue', 'Inter', sans-serif;
-    font-size: 7pt;
+    font-size: 10pt;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: #1a4a8a;
@@ -541,8 +538,8 @@
   .testimonial-quote {
     margin: 0;
     font-family: 'Charter', 'Georgia', serif;
-    font-size: 8.9pt;
-    line-height: 1.22;
+    font-size: 11pt;
+    line-height: 1.35;
     color: #141414;
   }
   .testimonial-meta {
@@ -554,7 +551,7 @@
     align-items: baseline;
     gap: 3mm;
     font-family: 'Helvetica Neue', 'Inter', sans-serif;
-    font-size: 7.3pt;
+    font-size: 10pt;
     color: #555;
   }
   .testimonial-meta .name {
@@ -566,7 +563,7 @@
   .testimonial-meta .swap {
     color: #1a4a8a;
     font-family: 'JetBrains Mono', 'Menlo', monospace;
-    font-size: 6.8pt;
+    font-size: 10pt;
   }
 
   /* ---------- §08 Conclusion ---------- */
@@ -583,8 +580,8 @@
   .conclusion-lede {
     margin: 0;
     font-family: 'Charter', 'Georgia', serif;
-    font-size: 11pt;
-    line-height: 1.32;
+    font-size: 12.5pt;
+    line-height: 1.46;
     color: #141414;
   }
   .conclusion-lede b { color: #1a4a8a; }
@@ -657,30 +654,25 @@
     <div class="body-col">
 
       <!-- §01 MOTIVATION -->
-      <section style="flex: 0.72;">
+      <section style="flex: 1.1;">
         <h2 class="section-title">
           <span class="num">01</span>Motivation
-          <span class="tagline">Replace shell glue.</span>
+          <span class="tagline">Biology first, no shell required.</span>
         </h2>
 
         <div class="motivation">
           <div>
-            <p class="lede">
-              Comp-bio runs on a sprawl of tools (RFdiffusion, AlphaFold,
-              PyMOL, Rosetta) that disagree on <b>formats</b>,
-              <b>runtimes</b>, and <b>parameters</b>. Connecting them today
-              means throwaway shell scripts.
+            <p class="lede-sub" style="font-style:normal; color:#333;">
+              Proteins are the key components in consistuting and sustaining an organism. Therefore, it is important to analyze and develop de novo (new) proteins to understand biological processes and develop new drugs. However, since the strcuture is highly complex, it is almost neccessary to use various computational tools including AIs such as RFdiffusion, and AlphaFold. Unfortunately, those tools currently present some difficulties for biologists to utilize. First, they require computer science knowledge to operate, but compared to biological knowledge that biologists possess, they are lacking in computer competency, and thus often struggle with learning and using the tools. Also, most of them have CLI environments, which is counterintuitive for researchers to employ. Secondly, each tool is highly compartmentalized, requiring distinct file formats and data schemas, which eventually demands tedious manual data conversion processes. Lastly, researchers face significant challenges due to the lack of definite protein design protocol.
             </p>
-            <p class="lede-sub">
-              Chaperonin makes the pipeline itself a first-class, type-checked,
-              reproducible artefact: visually <i>or</i> as code, with full
-              round-trip between the two.
+            <p class="lede-sub" style="margin-top:1.5mm; font-style:normal; color:#333;">
+              For these reasons, we developed a program that integrates a range of biological tools with a straightforward GUI. We were inspried by block-coding, and designed the UI. Hence, users can effotlessly follow the protocol as required using it. Futhermore, each tool is developed and managed as a separate module, thus if any modification is needed, it can be done by editing each module rather than the whole program. This architecture also allows easy expansion to support other tools by adding new modules. Additionally, since the platform utilize actual tools from protein research, it maintains professionality. Thus, researcher can combine their biological expertise with this program to conduct research in depth, while students or beginners can engage in biological reseaches without difficulties.
             </p>
           </div>
 
           <div class="diagram-box">
-            <!-- ============== Motivation SVG ============== -->
-            <svg viewBox="0 0 820 220" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+            <!-- ============== Motivation SVG: 3 problems → Chaperonin ============== -->
+            <svg viewBox="0 0 820 230" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <marker id="m1-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
                   <path d="M0,0 L10,5 L0,10 z" fill="#b85a5a"/>
@@ -693,56 +685,51 @@
                 </marker>
               </defs>
 
-              <text x="175" y="24" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="13" font-weight="700" fill="#141414" letter-spacing="2">TODAY &middot; SHELL GLUE</text>
+              <!-- ── LEFT: THREE PROBLEMS ── -->
+              <text x="178" y="22" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="13" font-weight="700" fill="#b85a5a" letter-spacing="1">PROBLEMS</text>
 
-              <g fill="#fff" stroke="#b85a5a" stroke-width="1.4" stroke-dasharray="3,2">
-                <rect x="20" y="80" width="80" height="34" rx="3"/>
-                <rect x="140" y="80" width="80" height="34" rx="3"/>
-                <rect x="260" y="80" width="80" height="34" rx="3"/>
-              </g>
-              <g font-family="Helvetica Neue, sans-serif" font-size="12" fill="#141414" text-anchor="middle">
-                <text x="60" y="101">RFdiffusion</text>
-                <text x="180" y="101">Rosetta</text>
-                <text x="300" y="101">PyMOL</text>
-              </g>
-              <g stroke="#b85a5a" stroke-width="1.4" stroke-dasharray="4,2" fill="none">
-                <line x1="100" y1="97" x2="138" y2="97" marker-end="url(#m1-red)"/>
-                <line x1="220" y1="97" x2="258" y2="97" marker-end="url(#m1-red)"/>
-              </g>
-              <g font-family="JetBrains Mono, monospace" font-size="9" fill="#b85a5a" text-anchor="middle" font-style="italic">
-                <text x="119" y="75">cp .pdb</text>
-                <text x="239" y="75">grep score</text>
-              </g>
-              <text x="175" y="148" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="11" fill="#888" font-style="italic">no types &middot; no cache &middot; not reproducible</text>
+              <!-- Problem 1: CS / CLI barrier -->
+              <rect x="18" y="36" width="320" height="46" rx="4" fill="#fff" stroke="#b85a5a" stroke-width="1.4" stroke-dasharray="4,2"/>
+              <text x="38" y="55" font-family="Helvetica Neue, sans-serif" font-size="11" font-weight="700" fill="#b85a5a">①</text>
+              <text x="56" y="55" font-family="Helvetica Neue, sans-serif" font-size="11" font-weight="700" fill="#141414">CS / CLI Barrier</text>
+              <text x="56" y="72" font-family="Helvetica Neue, sans-serif" font-size="9.5" fill="#555">Tools require programming skills; CLI is counterintuitive for biologists.</text>
 
-              <line x1="370" y1="97" x2="460" y2="97" stroke="#141414" stroke-width="3.5" marker-end="url(#m1-bk)" fill="none"/>
-              <text x="415" y="80" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="12" font-weight="600" fill="#141414">with Chaperonin</text>
+              <!-- Problem 2: Format fragmentation -->
+              <rect x="18" y="92" width="320" height="46" rx="4" fill="#fff" stroke="#b85a5a" stroke-width="1.4" stroke-dasharray="4,2"/>
+              <text x="38" y="111" font-family="Helvetica Neue, sans-serif" font-size="11" font-weight="700" fill="#b85a5a">②</text>
+              <text x="56" y="111" font-family="Helvetica Neue, sans-serif" font-size="11" font-weight="700" fill="#141414">Format Fragmentation</text>
+              <text x="56" y="128" font-family="Helvetica Neue, sans-serif" font-size="9.5" fill="#555">Each tool uses distinct schemas — tedious manual conversion required.</text>
 
-              <text x="650" y="24" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="13" font-weight="700" fill="#1a4a8a" letter-spacing="2">CHAPERONIN &middot; TYPED DAG</text>
+              <!-- Problem 3: No protocol -->
+              <rect x="18" y="148" width="320" height="46" rx="4" fill="#fff" stroke="#b85a5a" stroke-width="1.4" stroke-dasharray="4,2"/>
+              <text x="38" y="167" font-family="Helvetica Neue, sans-serif" font-size="11" font-weight="700" fill="#b85a5a">③</text>
+              <text x="56" y="167" font-family="Helvetica Neue, sans-serif" font-size="11" font-weight="700" fill="#141414">No Definite Protocol</text>
+              <text x="56" y="184" font-family="Helvetica Neue, sans-serif" font-size="9.5" fill="#555">No standard workflow guide; researchers struggle with design steps.</text>
 
-              <g fill="#fff" stroke="#1a4a8a" stroke-width="1.6">
-                <rect x="490" y="80" width="80" height="34" rx="3"/>
-                <rect x="600" y="80" width="80" height="34" rx="3"/>
-                <rect x="710" y="46" width="80" height="34" rx="3"/>
-                <rect x="710" y="114" width="80" height="34" rx="3"/>
-              </g>
-              <g font-family="Helvetica Neue, sans-serif" font-size="12" fill="#141414" text-anchor="middle">
-                <text x="530" y="101">Input PDB</text>
-                <text x="640" y="101">Rosetta</text>
-                <text x="750" y="67">PyMOL</text>
-                <text x="750" y="135">SELECT</text>
-              </g>
-              <g stroke="#1a4a8a" stroke-width="1.4" fill="none">
-                <line x1="570" y1="97" x2="598" y2="97" marker-end="url(#m1-blue)"/>
-                <path d="M 680 90 Q 695 80 708 65" marker-end="url(#m1-blue)"/>
-                <path d="M 680 104 Q 695 117 708 131" marker-end="url(#m1-blue)"/>
-              </g>
-              <g font-family="JetBrains Mono, monospace" font-size="9" fill="#1a4a8a" text-anchor="middle">
-                <text x="584" y="91">Structure.PDB</text>
-                <text x="702" y="75">Structure.PDB</text>
-                <text x="702" y="120">Text.Score</text>
-              </g>
-              <text x="650" y="180" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="11" fill="#444" font-style="italic">type-checked &middot; cached &middot; reproducible</text>
+              <!-- ── ARROW ── -->
+              <line x1="358" y1="115" x2="438" y2="115" stroke="#141414" stroke-width="3.5" marker-end="url(#m1-bk)" fill="none"/>
+              <text x="398" y="107" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="10" font-weight="600" fill="#141414">Chaperonin</text>
+
+              <!-- ── RIGHT: THREE SOLUTIONS ── -->
+              <text x="640" y="22" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="13" font-weight="700" fill="#1a4a8a" letter-spacing="1">CHAPERONIN</text>
+
+              <!-- Solution 1 -->
+              <rect x="458" y="36" width="344" height="46" rx="4" fill="#f4f6fb" stroke="#1a4a8a" stroke-width="1.5"/>
+              <text x="478" y="55" font-family="Helvetica Neue, sans-serif" font-size="11" font-weight="700" fill="#1a4a8a">①</text>
+              <text x="496" y="55" font-family="Helvetica Neue, sans-serif" font-size="11" font-weight="700" fill="#141414">Block-Coding GUI</text>
+              <text x="496" y="72" font-family="Helvetica Neue, sans-serif" font-size="9.5" fill="#555">Drag-and-wire interface; no terminal knowledge needed.</text>
+
+              <!-- Solution 2 -->
+              <rect x="458" y="92" width="344" height="46" rx="4" fill="#f4f6fb" stroke="#1a4a8a" stroke-width="1.5"/>
+              <text x="478" y="111" font-family="Helvetica Neue, sans-serif" font-size="11" font-weight="700" fill="#1a4a8a">②</text>
+              <text x="496" y="111" font-family="Helvetica Neue, sans-serif" font-size="11" font-weight="700" fill="#141414">Typed, Auto-converted Edges</text>
+              <text x="496" y="128" font-family="Helvetica Neue, sans-serif" font-size="9.5" fill="#555">Each module is self-contained; type system handles data compatibility.</text>
+
+              <!-- Solution 3 -->
+              <rect x="458" y="148" width="344" height="46" rx="4" fill="#f4f6fb" stroke="#1a4a8a" stroke-width="1.5"/>
+              <text x="478" y="167" font-family="Helvetica Neue, sans-serif" font-size="11" font-weight="700" fill="#1a4a8a">③</text>
+              <text x="496" y="167" font-family="Helvetica Neue, sans-serif" font-size="11" font-weight="700" fill="#141414">Visual Protocol</text>
+              <text x="496" y="184" font-family="Helvetica Neue, sans-serif" font-size="9.5" fill="#555">Workflow canvas embodies the protocol; experts and beginners alike.</text>
             </svg>
           </div>
         </div>
@@ -780,7 +767,7 @@
       </section>
 
       <!-- §03 ARCHITECTURE (2-column diagram + side panels) -->
-      <section style="flex: 1.22;">
+      <section style="flex: 0.78;">
         <h2 class="section-title">
           <span class="num">03</span>Architecture
           <span class="tagline">Four layers, one socket.</span>
@@ -799,7 +786,7 @@
               <!-- Band 1: Frontend -->
               <rect x="10" y="10" width="580" height="290" rx="6" fill="#f4f6fb" stroke="#141414" stroke-width="1.4"/>
               <text x="30" y="42" font-family="Helvetica Neue, sans-serif" font-size="18" font-weight="700" fill="#141414">&#9312; &nbsp;FRONTEND</text>
-              <text x="30" y="62" font-family="Helvetica Neue, sans-serif" font-size="12" fill="#555">React 18 &middot; ReactFlow &middot; 3Dmol.js</text>
+              <text x="30" y="62" font-family="Helvetica Neue, sans-serif" font-size="16" fill="#555">React 18 &middot; ReactFlow &middot; 3Dmol.js</text>
 
               <g fill="#fff" stroke="#141414" stroke-width="1.2">
                 <rect x="30" y="85" width="265" height="95" rx="5"/>
@@ -814,7 +801,7 @@
                   <text x="162" y="238">Inline 3D viewer</text>
                   <text x="437" y="238">Log panel</text>
                 </g>
-                <g font-size="11" fill="#1a4a8a" font-family="JetBrains Mono, monospace">
+                <g font-size="15" fill="#1a4a8a" font-family="JetBrains Mono, monospace">
                   <text x="162" y="152">typed, coloured wires</text>
                   <text x="437" y="152">round-trips with canvas</text>
                   <text x="162" y="262">3Dmol.js, in-node</text>
@@ -827,13 +814,13 @@
                 <line x1="270" y1="305" x2="270" y2="370" stroke="#141414" stroke-width="1.8" marker-end="url(#m3-arr)"/>
                 <line x1="330" y1="370" x2="330" y2="305" stroke="#141414" stroke-width="1.8" marker-end="url(#m3-arr)"/>
                 <rect x="345" y="320" width="225" height="32" rx="4" fill="#fff" stroke="#1a4a8a" stroke-width="1"/>
-                <text x="457.5" y="341" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#1a4a8a">WebSocket &middot; :8000/ws</text>
+                <text x="457.5" y="341" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="16" fill="#1a4a8a">WebSocket &middot; :8000/ws</text>
               </g>
 
               <!-- Band 2: Orchestrator -->
               <rect x="10" y="380" width="580" height="200" rx="6" fill="#fff" stroke="#141414" stroke-width="1.4"/>
               <text x="30" y="412" font-family="Helvetica Neue, sans-serif" font-size="18" font-weight="700" fill="#141414">&#9313; &nbsp;ORCHESTRATOR</text>
-              <text x="30" y="432" font-family="Helvetica Neue, sans-serif" font-size="12" fill="#555">Python 3.12, stdlib only</text>
+              <text x="30" y="432" font-family="Helvetica Neue, sans-serif" font-size="16" fill="#555">Python 3.12, stdlib only</text>
 
               <g fill="#fff" stroke="#141414" stroke-width="1.2">
                 <rect x="30" y="450" width="170" height="115" rx="5"/>
@@ -841,12 +828,12 @@
                 <rect x="400" y="450" width="170" height="115" rx="5"/>
               </g>
               <g text-anchor="middle" font-family="Helvetica Neue, sans-serif">
-                <g font-size="14" font-weight="600" fill="#141414">
+                <g font-size="17" font-weight="600" fill="#141414">
                   <text x="115" y="492">asyncio server</text>
                   <text x="300" y="492">Scheduler</text>
                   <text x="485" y="492">Content cache</text>
                 </g>
-                <g font-size="10.5" fill="#1a4a8a" font-family="JetBrains Mono, monospace">
+                <g font-size="15" fill="#1a4a8a" font-family="JetBrains Mono, monospace">
                   <text x="115" y="515">hand-rolled</text>
                   <text x="115" y="532">WS framer</text>
                   <text x="300" y="515">topo-sort</text>
@@ -860,13 +847,13 @@
               <g>
                 <line x1="300" y1="585" x2="300" y2="640" stroke="#141414" stroke-width="1.8" marker-end="url(#m3-arr)"/>
                 <rect x="320" y="600" width="250" height="30" rx="4" fill="#fff" stroke="#1a4a8a" stroke-width="1"/>
-                <text x="445" y="620" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#1a4a8a">/var/run/docker.sock</text>
+                <text x="445" y="620" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="16" fill="#1a4a8a">/var/run/docker.sock</text>
               </g>
 
               <!-- Band 3: Docker -->
               <rect x="10" y="650" width="580" height="210" rx="6" fill="#fff" stroke="#1a4a8a" stroke-width="1.4"/>
               <text x="30" y="682" font-family="Helvetica Neue, sans-serif" font-size="18" font-weight="700" fill="#141414">&#9314; &nbsp;HOST DOCKER DAEMON</text>
-              <text x="30" y="702" font-family="Helvetica Neue, sans-serif" font-size="12" fill="#555">per-node sibling containers</text>
+              <text x="30" y="702" font-family="Helvetica Neue, sans-serif" font-size="16" fill="#555">per-node sibling containers</text>
 
               <g fill="#fff" stroke="#1a4a8a" stroke-width="1.3">
                 <rect x="30" y="725" width="105" height="120" rx="5"/>
@@ -875,7 +862,7 @@
                 <rect x="369" y="725" width="105" height="120" rx="5"/>
                 <rect x="482" y="725" width="88" height="120" rx="5"/>
               </g>
-              <g text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="12" font-weight="600" fill="#141414">
+              <g text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="16" font-weight="600" fill="#141414">
                 <text x="82" y="790">Rosetta</text>
                 <text x="195" y="790">PyMOL</text>
                 <text x="308" y="790">RFdiff.</text>
@@ -914,7 +901,7 @@
       </section>
 
       <!-- §04 TRANSLATION -->
-      <section style="flex: 0.82;">
+      <section style="flex: 0.60;">
         <h2 class="section-title">
           <span class="num">04</span>Translation
           <span class="tagline">Two views, one AST.</span>
@@ -959,7 +946,7 @@
             <div class="ttl">AST</div>
             <div class="body">
               <svg viewBox="0 0 220 170" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-                <g font-family="JetBrains Mono, monospace" font-size="10" fill="#141414">
+                <g font-family="JetBrains Mono, monospace" font-size="12" fill="#141414">
                   <rect x="80" y="8" width="60" height="22" rx="3" fill="#fff" stroke="#141414" stroke-width="1.4"/>
                   <text x="110" y="23" text-anchor="middle" font-weight="700">Pipeline</text>
 
@@ -991,14 +978,14 @@
                     <rect x="87" y="100" width="46" height="20" rx="3"/>
                     <rect x="146" y="100" width="46" height="20" rx="3"/>
                   </g>
-                  <g text-anchor="middle" font-size="9">
+                  <g text-anchor="middle" font-size="11">
                     <text x="51" y="113">params</text>
                     <text x="110" y="113">edges</text>
                     <text x="169" y="113">edges</text>
                   </g>
 
-                  <text x="110" y="148" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="9" fill="#555" font-style="italic">canonical</text>
-                  <text x="110" y="160" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="9" fill="#555" font-style="italic">either view writes it</text>
+                  <text x="110" y="148" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="11" fill="#555" font-style="italic">canonical</text>
+                  <text x="110" y="160" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="11" fill="#555" font-style="italic">either view writes it</text>
                 </g>
               </svg>
             </div>
@@ -1072,19 +1059,19 @@ best    = <span class="kw">select</span>(
               </defs>
 
               <rect x="10" y="78" width="110" height="44" rx="4" fill="#fff" stroke="#141414" stroke-width="1.5"/>
-              <text x="65" y="98" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="12" font-weight="700" fill="#141414">my_tool.py</text>
-              <text x="65" y="113" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#555">@module(...)</text>
+              <text x="65" y="98" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="20" font-weight="700" fill="#141414">my_tool.py</text>
+              <text x="65" y="115" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="16" fill="#555">@module(...)</text>
 
               <line x1="123" y1="100" x2="170" y2="100" stroke="#141414" stroke-width="1.6" marker-end="url(#m5-arr)"/>
 
               <rect x="173" y="78" width="155" height="44" rx="4" fill="#fff" stroke="#141414" stroke-width="1.5"/>
-              <text x="250" y="98" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="12" font-weight="700" fill="#141414">Introspection</text>
-              <text x="250" y="113" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="9.5" fill="#555">reads type annotations</text>
+              <text x="250" y="98" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="20" font-weight="700" fill="#141414">Introspection</text>
+              <text x="250" y="115" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="16" fill="#555">reads type annotations</text>
 
               <line x1="331" y1="100" x2="378" y2="100" stroke="#141414" stroke-width="1.6" marker-end="url(#m5-arr)"/>
 
               <rect x="381" y="78" width="95" height="44" rx="4" fill="#1a4a8a" stroke="#1a4a8a" stroke-width="1.5"/>
-              <text x="428.5" y="106" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="13" font-weight="700" fill="#fff">Registry</text>
+              <text x="428.5" y="106" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="22" font-weight="700" fill="#fff">Registry</text>
 
               <g stroke="#141414" stroke-width="1.4" fill="none">
                 <path d="M 476 90 Q 495 60 505 36" marker-end="url(#m5-arr)"/>
@@ -1093,20 +1080,20 @@ best    = <span class="kw">select</span>(
               </g>
 
               <rect x="508" y="20" width="44" height="22" rx="3" fill="#f4f6fb" stroke="#1a4a8a" stroke-width="1.3"/>
-              <text x="530" y="35" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="10" font-weight="600" fill="#141414">Palette</text>
+              <text x="530" y="35" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="18" font-weight="600" fill="#141414">Palette</text>
 
               <rect x="508" y="88" width="44" height="22" rx="3" fill="#f4f6fb" stroke="#1a4a8a" stroke-width="1.3"/>
-              <text x="530" y="103" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="10" font-weight="600" fill="#141414">DSL</text>
+              <text x="530" y="103" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="18" font-weight="600" fill="#141414">DSL</text>
 
               <rect x="508" y="156" width="44" height="22" rx="3" fill="#f4f6fb" stroke="#1a4a8a" stroke-width="1.3"/>
-              <text x="530" y="171" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="10" font-weight="600" fill="#141414">Canvas</text>
+              <text x="530" y="171" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="18" font-weight="600" fill="#141414">Canvas</text>
             </svg>
           </div>
         </div>
       </section>
 
       <!-- §06 RESULTS (vertical stack of 3 figures) -->
-      <section style="flex: 0.92;">
+      <section style="flex: 1.25; overflow: hidden;">
         <h2 class="section-title">
           <span class="num">06</span>Results
           <span class="tagline">End-to-end on a laptop.</span>
@@ -1114,48 +1101,33 @@ best    = <span class="kw">select</span>(
 
         <div class="results-vert">
           <div class="figure">
-            <div class="img-placeholder">
-              <div class="label">
-                Screenshot placeholder
-                <small>Input &rarr; Rosetta Relax &rarr; Visualizer; inline 3D structure</small>
-              </div>
-            </div>
+            <img src="PosterImage/image_1.png" style="width:100%; height:auto; display:block; border:0.35mm solid #b5b5b5;" alt="Rosetta Relax pipeline screenshot"/>
             <div class="caption">
-              <div><span class="fignum">Fig. 1</span><b>End-to-end in 8&ndash;10&nbsp;s.</b></div>
-              <div style="margin-top:1mm">Three-node pipeline on 1CRN; the relaxed structure renders inside the <span class="mono">Visualizer</span> node, rotatable, no external window.</div>
+              <div><span class="fignum">Fig. 1</span><b>Rosetta Relax Pipeline.</b></div>
+              <div style="margin-top:1mm">The relaxations step in crucial preprocessing procedure required to run protein design tools sucha s RoseetaFold. As illustrated, the pipeline receives a portein structure file (in a format of .pdb) as input, processes it through the Rosetta Relax module, and renders the relaxed struture via the Visualizer module. From the user's perspective, the entire process is reduced to connecting three nodes on a visual canvas without any command line (CLI) interaction. The relaxed structure is rendered directly within the program, eliminating the requirement for external visualization tools.</div>
             </div>
           </div>
 
           <div class="figure">
-            <div class="img-placeholder">
-              <div class="label">
-                Screenshot placeholder
-                <small>Worst-of-N graph: FOR loop with three Rosetta runs and a SELECT</small>
-              </div>
-            </div>
+            <img src="PosterImage/image_2.png" style="width:100%; height:auto; display:block; border:0.35mm solid #b5b5b5;" alt="Iterative execution pipeline screenshot"/>
             <div class="caption">
-              <div><span class="fignum">Fig. 2</span><b>Control flow as wires.</b></div>
-              <div style="margin-top:1mm"><span class="mono">START_FOR/END_FOR</span>, scoped <span class="mono">SAVE/GET</span>, and <span class="mono">SELECT</span> express &ldquo;run N, keep the best&rdquo; without leaving the graph.</div>
+              <div><span class="fignum">Fig. 2</span><b>Iterative Execution &amp; Conditional Logic.</b></div>
+              <div style="margin-top:1mm">The second result demonstrates the function for iterative execution and conditional logic within a pipline. As shown, the program runs the Rosetta Relax module three times and selects the output with the lowest energy score. Thus we can automatically choose the most stable structure with the Select node. Not only Rosetta Relax, but all other tools can equally be incorporated into loop and conditional structures through the Start For, End For and Select nodes. By allowing multiple trials and conditional selection within a pipeline, researchers can systematically search a range of outputs and identify the optimal result.</div>
             </div>
           </div>
 
           <div class="figure">
-            <div class="img-placeholder">
-              <div class="label">
-                Screenshot placeholder
-                <small>Palette with categories: a greyed-out GPU-only module</small>
-              </div>
-            </div>
+            <img src="PosterImage/image_3.png" style="width:100%; height:auto; display:block; border:0.35mm solid #b5b5b5;" alt="De novo protein design pipeline screenshot"/>
             <div class="caption">
-              <div><span class="fignum">Fig. 3</span><b>Plug-and-play modules.</b></div>
-              <div style="margin-top:1mm">Five modules wired today (Rosetta, PyMOL, RFdiffusion, AlphaFold, RoseTTAFold); GPU modules gated on host capability.</div>
+              <div><span class="fignum">Fig. 3</span><b>De Novo Protein Design Pipeline.</b></div>
+              <div style="margin-top:1mm">The third result shows a complete de novo (new) protein design pipeline, analogous to a real-world drug development workflow. As shown in the figure, a target protein structure is first passes via RFDiffusion module and generate a binding protein. This de novo protein next moves to the AlphaFold module and evaluated by the iPAE scores, which represents how accurately the position is predicted. This workflow is directly mirrors the process of developing a binding protein in drug discovery.</div>
             </div>
           </div>
         </div>
       </section>
 
       <!-- §07 TESTIMONIALS -->
-      <section style="flex: 0.54;">
+      <section style="flex: 0.22;">
         <h2 class="section-title">
           <span class="num">07</span>Testimonials
           <span class="tagline">2&ndash;3 short user voices.</span>
@@ -1180,41 +1152,12 @@ best    = <span class="kw">select</span>(
               </div>
             </div>
 
-            <div class="testimonial-card">
-              <div class="testimonial-mark">&ldquo;</div>
-              <div class="testimonial-copy">
-                <div class="testimonial-kicker">Usability feedback</div>
-                <p class="testimonial-quote">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
-                  efficitur nibh sit amet libero sodales tincidunt.
-                </p>
-                <div class="testimonial-meta">
-                  <div><span class="name">Jane Roe</span> &middot; lab workflow tester</div>
-                  <div class="swap">slot 02</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="testimonial-card">
-              <div class="testimonial-mark">&ldquo;</div>
-              <div class="testimonial-copy">
-                <div class="testimonial-kicker">Demo-day impression</div>
-                <p class="testimonial-quote">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-                  viverra lacus non lorem luctus, at posuere neque tempus.
-                </p>
-                <div class="testimonial-meta">
-                  <div><span class="name">Alex Kim</span> &middot; project showcase visitor</div>
-                  <div class="swap">slot 03</div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
       <!-- §08 CONCLUSION -->
-      <section style="flex: 0.42;">
+      <section style="flex: 0.58;">
         <h2 class="section-title">
           <span class="num">08</span>Conclusion
           <span class="tagline">Typed pipelines, fewer glue scripts.</span>
@@ -1222,15 +1165,8 @@ best    = <span class="kw">select</span>(
 
         <div class="conclusion-box">
           <p class="conclusion-lede">
-            <b>Chaperonin</b> lets users build computational-biology workflows
-            visually or as code, then run them as a typed, reproducible
-            pipeline.
+            In conclusion, Chaperonin addresses the key difficulties that many biologist face in protein design. By integrating established tools such as RFdiffusion, Alphafold, Evaluator, Visualizer and various other tools, within an intuitive node-based GUI, this program offers highly effective environment for both researchers and beginners who waish to design their own de novo proteins. Futhermore, by incoporating loop and conditonal structures into the pipeline, the entire processes can be conducted systemmatically. With this platform, users can easily follow the workflows directly analogous to the real-world research, including drug development. Futher work will focus on adding new modules such as RosettaFold to improve its functions and versatility.
           </p>
-          <div class="conclusion-points">
-            <div class="conclusion-point"><b>Compose</b> Rosetta, PyMOL, RFdiffusion, and other tools without ad-hoc shell scripting.</div>
-            <div class="conclusion-point"><b>Validate and run</b> the graph with live feedback, cached results, and explicit data types.</div>
-            <div class="conclusion-point"><b>Extend</b> the platform by dropping in one self-describing Python module.</div>
-          </div>
         </div>
       </section>
 
