@@ -8,6 +8,12 @@
   Sihoo Lee · Hangyeol Lim &nbsp;·&nbsp; 2026-1 한국과학영재학교 정보과학 프로젝트 발표회
 </p>
 
+<p align="center">
+  <a href="https://github.com/sihooleebd/chaperonin/blob/main/poster/poster.pdf"><b>Poster (PDF)</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/sihooleebd/chaperonin/blob/main/assets/chaperonin_proposal.md"><b>Project Proposal</b></a>
+</p>
+
 ---
 
 Compose RFdiffusion, Rosetta, PyMOL, AlphaFold and friends visually on a node canvas, or textually as a tiny DSL — both round-trip. Pipelines run as a chain of Docker containers spawned by a stdlib-only Python orchestrator. Outputs stream live to the browser; structures render inline.
