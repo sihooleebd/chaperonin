@@ -1,6 +1,10 @@
 (function () {
   'use strict';
 
+  // ───────────────────────────────────────────────────────────
+  // Hero diagram constants
+  // ───────────────────────────────────────────────────────────
+
   var CENTER = { x: 300, y: 230 };
 
   var NODES = [
@@ -12,55 +16,58 @@
     { id: 'rosettafold', x: 132, y: 230 },
   ];
 
-  // Which nodes start connected
-  var connected = { rfd: true, pymol: true, rosetta: true };
+  var prefersReducedMotion =
+    window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var isRunning = false;
+  // ───────────────────────────────────────────────────────────
+  // Section reveals (intersection observer)
+  // ───────────────────────────────────────────────────────────
 
-  // ── Connect / disconnect ──────────────────────────────────
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !prefersReducedMotion) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(function (el) { io.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('in'); });
+  }
 
-  function setConnected(id, yes) {
-    var edgeEl = document.getElementById('edge-' + id);
+  // ───────────────────────────────────────────────────────────
+  // Hero diagram: line-draw on load, mark all nodes connected
+  // ───────────────────────────────────────────────────────────
+
+  function setNodeConnected(id, yes) {
     var nodeEl = document.getElementById('node-' + id);
-    if (!edgeEl || !nodeEl) return;
-
-    if (yes) {
-      connected[id] = true;
-      edgeEl.classList.add('connected');
-      nodeEl.classList.add('connected');
-    } else {
-      delete connected[id];
-      edgeEl.classList.remove('connected');
-      nodeEl.classList.remove('connected');
-    }
+    if (!nodeEl) return;
+    if (yes) nodeEl.classList.add('connected');
+    else     nodeEl.classList.remove('connected');
   }
 
-  // Apply initial state
-  NODES.forEach(function (n) {
-    setConnected(n.id, !!connected[n.id]);
-  });
-
-  // ── Idle animation ───────────────────────────────────────
-
-  function idleTick() {
-    if (isRunning) return;
-
-    var ids = NODES.map(function (n) { return n.id; });
-    var id  = ids[Math.floor(Math.random() * ids.length)];
-
-    // Keep between 1 and 5 connections at all times
-    var count = Object.keys(connected).length;
-    var isConn = !!connected[id];
-
-    if (isConn && count <= 1) return;     // don't drop to 0
-    if (!isConn && count >= 5) return;    // don't connect all
-
-    setConnected(id, !isConn);
+  function drawEdges() {
+    NODES.forEach(function (n, i) {
+      var edge = document.getElementById('edge-' + n.id);
+      if (!edge) return;
+      var delay = prefersReducedMotion ? 0 : (180 + i * 100);
+      setTimeout(function () {
+        edge.classList.add('drawn');
+        setNodeConnected(n.id, true);
+      }, delay);
+    });
   }
 
-  setInterval(idleTick, 2400);
+  // Run draw immediately so the scene is "finished" on first paint
+  drawEdges();
 
-  // ── Pulse animation ──────────────────────────────────────
+  // ───────────────────────────────────────────────────────────
+  // Pulse dot travel: center → node
+  // ───────────────────────────────────────────────────────────
 
   function easeInOut(t) {
     return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
@@ -71,7 +78,13 @@
       var pulseEl = document.getElementById('pulse-' + node.id);
       if (!pulseEl) { resolve(); return; }
 
-      var duration = 680;
+      if (prefersReducedMotion) {
+        // Just flash the destination, no travel
+        flashNode(node.id, resolve);
+        return;
+      }
+
+      var duration = 720;
       var startTime = null;
 
       pulseEl.style.opacity = '1';
@@ -85,20 +98,13 @@
 
         pulseEl.setAttribute('cx', CENTER.x + (node.x - CENTER.x) * t);
         pulseEl.setAttribute('cy', CENTER.y + (node.y - CENTER.y) * t);
-        // Fade out in the last 15% of travel
         pulseEl.style.opacity = raw < 0.85 ? '1' : String(Math.max(0, (1 - raw) / 0.15));
 
         if (raw < 1) {
           requestAnimationFrame(step);
         } else {
           pulseEl.style.opacity = '0';
-          // Flash the destination node
-          var nodeEl = document.getElementById('node-' + node.id);
-          if (nodeEl) {
-            nodeEl.classList.add('activated');
-            setTimeout(function () { nodeEl.classList.remove('activated'); }, 500);
-          }
-          resolve();
+          flashNode(node.id, resolve);
         }
       }
 
@@ -106,35 +112,48 @@
     });
   }
 
-  // ── Run pipeline ─────────────────────────────────────────
+  function flashNode(id, done) {
+    var nodeEl = document.getElementById('node-' + id);
+    if (nodeEl) {
+      nodeEl.classList.add('activated');
+      setTimeout(function () {
+        nodeEl.classList.remove('activated');
+        if (done) done();
+      }, 420);
+    } else if (done) {
+      done();
+    }
+  }
+
+  // ───────────────────────────────────────────────────────────
+  // Run button: staggered dispatch
+  // ───────────────────────────────────────────────────────────
+
+  var isRunning = false;
 
   function runPipeline() {
     if (isRunning) return;
     isRunning = true;
 
     var btn = document.getElementById('run-btn');
+    if (!btn) return;
+    var originalText = btn.textContent;
     btn.classList.add('running');
     btn.textContent = '● Running…';
 
-    // Connect everything
-    NODES.forEach(function (n) { setConnected(n.id, true); });
-
-    // Brief pause, then fire pulses staggered
-    setTimeout(function () {
-      var promises = NODES.map(function (n, i) {
-        return new Promise(function (resolve) {
-          setTimeout(function () { animatePulse(n).then(resolve); }, i * 160);
-        });
+    var promises = NODES.map(function (n, i) {
+      return new Promise(function (resolve) {
+        setTimeout(function () { animatePulse(n).then(resolve); }, i * 140);
       });
+    });
 
-      Promise.all(promises).then(function () {
-        setTimeout(function () {
-          btn.classList.remove('running');
-          btn.textContent = '►  Run Pipeline';
-          isRunning = false;
-        }, 320);
-      });
-    }, 350);
+    Promise.all(promises).then(function () {
+      setTimeout(function () {
+        btn.classList.remove('running');
+        btn.textContent = originalText;
+        isRunning = false;
+      }, 280);
+    });
   }
 
   var runBtn = document.getElementById('run-btn');
