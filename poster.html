@@ -1101,7 +1101,7 @@ best    = <span class="kw">select</span>(
 
         <div class="results-vert">
           <div class="figure">
-            <img src="PosterImage/image_1.png" style="width:100%; height:auto; display:block; border:0.35mm solid #b5b5b5;" alt="Rosetta Relax pipeline screenshot"/>
+            <img src="./assets/PosterImage/image_1.png" style="width:100%; height:auto; display:block; border:0.35mm solid #b5b5b5;" alt="Rosetta Relax pipeline screenshot"/>
             <div class="caption">
               <div><span class="fignum">Fig. 1</span><b>Rosetta Relax Pipeline.</b></div>
               <div style="margin-top:1mm">The relaxations step in crucial preprocessing procedure required to run protein design tools sucha s RoseetaFold. As illustrated, the pipeline receives a portein structure file (in a format of .pdb) as input, processes it through the Rosetta Relax module, and renders the relaxed struture via the Visualizer module. From the user's perspective, the entire process is reduced to connecting three nodes on a visual canvas without any command line (CLI) interaction. The relaxed structure is rendered directly within the program, eliminating the requirement for external visualization tools.</div>
@@ -1109,7 +1109,7 @@ best    = <span class="kw">select</span>(
           </div>
 
           <div class="figure">
-            <img src="PosterImage/image_2.png" style="width:100%; height:auto; display:block; border:0.35mm solid #b5b5b5;" alt="Iterative execution pipeline screenshot"/>
+            <img src="./assets/PosterImage/image_2.png" style="width:100%; height:auto; display:block; border:0.35mm solid #b5b5b5;" alt="Iterative execution pipeline screenshot"/>
             <div class="caption">
               <div><span class="fignum">Fig. 2</span><b>Iterative Execution &amp; Conditional Logic.</b></div>
               <div style="margin-top:1mm">The second result demonstrates the function for iterative execution and conditional logic within a pipline. As shown, the program runs the Rosetta Relax module three times and selects the output with the lowest energy score. Thus we can automatically choose the most stable structure with the Select node. Not only Rosetta Relax, but all other tools can equally be incorporated into loop and conditional structures through the Start For, End For and Select nodes. By allowing multiple trials and conditional selection within a pipeline, researchers can systematically search a range of outputs and identify the optimal result.</div>
@@ -1117,7 +1117,7 @@ best    = <span class="kw">select</span>(
           </div>
 
           <div class="figure">
-            <img src="PosterImage/image_3.png" style="width:100%; height:auto; display:block; border:0.35mm solid #b5b5b5;" alt="De novo protein design pipeline screenshot"/>
+            <img src="./assets/PosterImage/image_3.png" style="width:100%; height:auto; display:block; border:0.35mm solid #b5b5b5;" alt="De novo protein design pipeline screenshot"/>
             <div class="caption">
               <div><span class="fignum">Fig. 3</span><b>De Novo Protein Design Pipeline.</b></div>
               <div style="margin-top:1mm">The third result shows a complete de novo (new) protein design pipeline, analogous to a real-world drug development workflow. As shown in the figure, a target protein structure is first passes via RFDiffusion module and generate a binding protein. This de novo protein next moves to the AlphaFold module and evaluated by the iPAE scores, which represents how accurately the position is predicted. This workflow is directly mirrors the process of developing a binding protein in drug discovery.</div>
